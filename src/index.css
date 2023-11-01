@@ -1,0 +1,28 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url("https://fonts.googleapis.com/css2?family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300;1,400;1,500;1,700&display=swap");
+
+#root {
+  --nao_mint: "#C7F9CC";
+  --nao_bright_green: "#80ED99";
+  --nao_green: "#57CC99";
+  --nao_turquoise: "#38A3A5";
+  --nao_blue: "#22577A";
+  --nao_light_gray: "#E9ECEF";
+  --nao_middle_gray: "#CED4DA";
+  --nao_middledark_gray: "#6C757D";
+  --nao_dark_gray: "#495057";
+  --nao_black: "#212529";
+}
+body {
+  margin: 0;
+  font-family: "Ubuntu", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: "Ubuntu", sans-serif;
+}

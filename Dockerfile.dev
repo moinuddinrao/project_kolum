@@ -1,0 +1,14 @@
+FROM node:18-alpine
+
+WORKDIR /app
+
+COPY ./webapp/package.json ./webapp/package-lock.json /app/webapp/
+
+RUN cd ./webapp && npm install
+
+COPY ./webapp /app/webapp
+COPY ./shared /app/shared
+
+WORKDIR /app/webapp
+
+CMD ["npm", "start"]

@@ -19,7 +19,12 @@ interface Company {
 }
 
 const Dashboard = () => {
-  const [isUpdateData, setIsUpdateData] = useState(false);
+  const [updataLegalInfo, setUpdateLegalInfo] = useState(false);
+  const [updateAddress, setUpdateAddress] = useState(false);
+
+  const saveData = () => {
+    console.log("Data Saved");
+  };
 
   const companyData: Company = {
     name: "kolum.earth",
@@ -51,17 +56,17 @@ const Dashboard = () => {
             {companyData && (
               <PrimaryButton
                 onClick={() => {
-                  setIsUpdateData(!isUpdateData);
+                  setUpdateLegalInfo(!updataLegalInfo);
                 }}
                 className="w-10 h-10 flex justify-center items-center text-xl"
               >
-                {isUpdateData ? <CloseOutlined /> : <EditOutlined />}
+                {updataLegalInfo ? <CloseOutlined /> : <EditOutlined />}
               </PrimaryButton>
             )}
           </div>
 
           {/* View Legal Information */}
-          <div className={`${isUpdateData ? "hidden" : "block"} flex`}>
+          <div className={`${updataLegalInfo ? "hidden" : "block"} flex`}>
             {/* Legal Name */}
             <div className="w-1/3 flex flex-col items-left gap-3">
               <p className={`${styles.label}`}>Legal Name*</p>
@@ -82,7 +87,7 @@ const Dashboard = () => {
           </div>
 
           {/* Update Legal Information */}
-          <div className={`${isUpdateData ? "block" : "hidden"}`}>
+          <div className={`${updataLegalInfo ? "block" : "hidden"}`}>
             {/* <UpdateLegalInformation /> */}
           </div>
         </div>
@@ -94,11 +99,11 @@ const Dashboard = () => {
             {companyData && (
               <PrimaryButton
                 onClick={() => {
-                  setIsUpdateData(!isUpdateData);
+                  setUpdateAddress(!updateAddress);
                 }}
                 className="w-10 h-10 flex justify-center items-center text-xl"
               >
-                {isUpdateData ? <CloseOutlined /> : <EditOutlined />}
+                {updateAddress ? <CloseOutlined /> : <EditOutlined />}
               </PrimaryButton>
             )}
           </div>
@@ -106,7 +111,7 @@ const Dashboard = () => {
           {/* View Address */}
           <div
             className={`${
-              isUpdateData ? "hidden" : "block"
+              updateAddress ? "hidden" : "block"
             } flex flex-col gap-5`}
           >
             {/* Address First Row */}
@@ -156,7 +161,7 @@ const Dashboard = () => {
           </div>
 
           {/* Update Address */}
-          <div className={`${isUpdateData ? "block" : "hidden"}`}>
+          <div className={`${updateAddress ? "block" : "hidden"}`}>
             {/* <UpdateAddress /> */}
           </div>
         </div>
@@ -198,7 +203,10 @@ const Dashboard = () => {
 
         {/* Save Button */}
         <div className="flex justify-end">
-          <PrimaryButton className="w-fit h-fit px-10 text-lg">
+          <PrimaryButton
+            onClick={saveData}
+            className="w-fit h-fit px-10 text-lg"
+          >
             Save
           </PrimaryButton>
         </div>

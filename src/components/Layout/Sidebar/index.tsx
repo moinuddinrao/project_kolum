@@ -13,7 +13,7 @@ const Sidebar: React.FC = () => {
     >
       <div className="h-[20%]">
         <Logo />
-        <hr className="my-0 mx-4 h-0.5 border-solid text-nao_blue" />
+        <hr className="my-0 mx-4 border border-solid border-nao_blue" />
       </div>
       <div className="h-[80%]">
         <Menu />

@@ -8,8 +8,9 @@ export const PrimaryButton: React.FC<ButtonProps> = (props) => {
   return (
     <Button
       type="primary"
-      onClick={props.onClick}
-      className={`bg-nao_dark_gray rounded-full ${props?.className}`}
+      htmlType={props?.htmlType}
+      onClick={props?.onClick}
+      className={`!bg-nao_dark_gray !rounded-full ${props?.className}`}
     >
       {props.children}
     </Button>

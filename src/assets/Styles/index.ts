@@ -6,8 +6,8 @@ const styles = {
   heading3:
     "m-0 p-0 font-ubuntu font-bold text-[24px] leading-[32px] text-nao_dark_gray",
   label:
-    "m-0 p-0 font-lato font-medium text-[16px] leading-[24px] text-nao_middledark_gray",
-  text: "m-0 p-0 font-lato font-medium text-[16px] leading-[24px] text-nao_dark_gray",
+    "!m-0 !p-0 !font-lato !font-medium !text-[16px] !leading-[24px] !text-nao_middledark_gray",
+  text: "!m-0 !p-0 !font-lato !font-medium !text-[16px] !leading-[24px] !text-nao_dark_gray",
 
   section: `flex flex-col gap-10 m-10`,
 

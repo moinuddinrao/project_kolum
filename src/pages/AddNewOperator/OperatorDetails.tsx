@@ -1,6 +1,10 @@
 import React from "react";
 
-import { ArrowLeftOutlined, QuestionCircleOutlined } from "@ant-design/icons";
+import {
+  ArrowLeftOutlined,
+  QuestionCircleOutlined,
+  PlusOutlined,
+} from "@ant-design/icons";
 import { Table } from "antd";
 
 import { CNCodeData, CNCodeColumn } from "./OperatorData";
@@ -86,9 +90,13 @@ const OperatorDetails: React.FC<OperatorDetailsProps> = ({
       <h1 className={`${styles.heading1}`}>Add New Operator</h1>
 
       <div className={`${styles.box} gap-5`}>
-        <div>
+        <div className="flex justify-between items-center">
           <PrimaryButton onClick={handleBackClick}>
             <ArrowLeftOutlined />
+          </PrimaryButton>
+          <PrimaryButton>
+            <PlusOutlined />
+            Add {selectedData.label} to your list of operators
           </PrimaryButton>
         </div>
         <h2 className={`${styles.heading2}`}>{selectedData?.label}</h2>

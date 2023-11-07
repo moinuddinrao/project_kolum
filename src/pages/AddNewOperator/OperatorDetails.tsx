@@ -48,7 +48,11 @@ const OperatorDetails: React.FC<OperatorDetailsProps> = ({
     { name: "legalName", label: "Legal Name*", value: selectedData.label },
     {
       name: "locodeNumber",
-      label: "UN/LOCODE Number",
+      label: (
+        <span>
+          UN/LOCODE Number <QuestionCircleOutlined />
+        </span>
+      ),
       value: selectedData.eori,
     },
     {
@@ -82,7 +86,7 @@ const OperatorDetails: React.FC<OperatorDetailsProps> = ({
       label: "Country of Establishment",
       value: selectedData.country,
     },
-    { name: "poBox", label: "PO Box", value: selectedData.poBox },
+    { name: "poBox", label: "PO Box", value: "" },
   ];
 
   return (
@@ -135,7 +139,7 @@ const OperatorDetails: React.FC<OperatorDetailsProps> = ({
           <div className="flex">
             {addressFields.slice(0, 3).map((field) => (
               <div className="w-1/3" key={field.name}>
-                <p className={`${styles.label} w-1/3`}>{field.label}</p>
+                <p className={`${styles.label} w-1/1`}>{field.label}</p>
               </div>
             ))}
           </div>

@@ -12,6 +12,8 @@ import {
 import EditableCell from "./EditableCell";
 import { originData } from "./AllOperatorsData";
 
+import styles from "@/assets/Styles";
+
 export interface Item {
   key: string;
   name: string;
@@ -19,9 +21,16 @@ export interface Item {
   country: string;
   imported_good: string;
   Production_installation: string;
+  Phone_number: string;
   editable: boolean;
   dataIndex: string;
   title: string;
+  eori: string;
+  portalId: number;
+  streetName: string;
+  streetNumber: string;
+  zip: number;
+  poBox: string | null;
 }
 
 const OperatorsTable = () => {
@@ -81,13 +90,18 @@ const OperatorsTable = () => {
     return (
       <Menu>
         <Menu.Item
+          className={`${styles.text}`}
           key="edit"
           icon={<EditTwoTone />}
           onClick={() => edit(record)}
         >
           Edit
         </Menu.Item>
-        <Menu.Item key="delete" icon={<DeleteTwoTone />}>
+        <Menu.Item
+          className={`${styles.text}`}
+          key="delete"
+          icon={<DeleteTwoTone />}
+        >
           <Popconfirm
             title="Sure to delete?"
             onConfirm={() => deleteRecord(record)}
@@ -183,7 +197,7 @@ const OperatorsTable = () => {
   return (
     <Form form={form} component={false}>
       <Table
-        className="p-3 overflow-auto"
+        className={`${styles.label} p-3 overflow-auto`}
         components={{
           body: {
             cell: EditableCell,

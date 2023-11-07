@@ -1,0 +1,196 @@
+import React from "react";
+
+import { ArrowLeftOutlined, QuestionCircleOutlined } from "@ant-design/icons";
+import { Table } from "antd";
+
+import { CNCodeData, CNCodeColumn } from "./OperatorData";
+import { InstallationData, InstallationColumn } from "./OperatorData";
+
+import { PrimaryButton } from "@/components/Button/PrimaryButton";
+import styles from "@/assets/Styles";
+
+interface Company {
+  name: string | null;
+  label: string | null;
+  eori: string | null;
+  portalId: number | null;
+  streetName: string | null;
+  streetNumber: string | null;
+  addressAddition: string | null;
+  Phone_number: string | null;
+  city: string | null;
+  zip: number | null;
+  country: string | null;
+  poBox: string | null;
+}
+
+interface OperatorDetailsProps {
+  selectedData: Partial<Company>;
+  setSelectedData: any;
+}
+
+const OperatorDetails: React.FC<OperatorDetailsProps> = ({
+  selectedData,
+  setSelectedData,
+}) => {
+  const handleBackClick = () => {
+    console.log(selectedData);
+    setSelectedData(null);
+  };
+
+  console.log(selectedData);
+
+  const infofields = [
+    { name: "legalName", label: "Legal Name*", value: selectedData.label },
+    {
+      name: "locodeNumber",
+      label: "UN/LOCODE Number",
+      value: selectedData.eori,
+    },
+    {
+      name: "economicActivity",
+      label: "Economic Activity",
+      value: "Steel Production",
+    },
+  ];
+
+  const contactFields = [
+    { name: "firstName", label: "First Name", value: selectedData.label },
+    { name: "email", label: "Email", value: `${selectedData.label}@gmail.com` },
+    {
+      name: "phoneNumber",
+      label: "Phone Number",
+      value: selectedData.Phone_number,
+    },
+  ];
+
+  const addressFields = [
+    { name: "street", label: "Street", value: selectedData.streetName },
+    {
+      name: "streetNumber",
+      label: "Street Number",
+      value: selectedData.streetNumber,
+    },
+    { name: "city", label: "City", value: selectedData.city },
+    { name: "postcode", label: "Postcode", value: selectedData.zip },
+    {
+      name: "country",
+      label: "Country of Establishment",
+      value: selectedData.country,
+    },
+    { name: "poBox", label: "PO Box", value: selectedData.poBox },
+  ];
+
+  return (
+    <section id="company-data" className={`${styles.section}`}>
+      <h1 className={`${styles.heading1}`}>Add New Operator</h1>
+
+      <div className={`${styles.box} gap-5`}>
+        <div>
+          <PrimaryButton onClick={handleBackClick}>
+            <ArrowLeftOutlined />
+          </PrimaryButton>
+        </div>
+        <h2 className={`${styles.heading2}`}>{selectedData?.label}</h2>
+
+        {/* Basic Information */}
+        <h2 className={`${styles.heading3}`}>Basic Information</h2>
+        <div className="flex flex-row flex-wrap gap-y-10">
+          {infofields.map((field) => (
+            <div
+              className="w-1/3 flex flex-col items-left gap-3"
+              key={String(field.name)}
+            >
+              <p className={`${styles.label}`}>{field.label}</p>
+              <p className={`${styles.text}`}>{field.value}</p>
+            </div>
+          ))}
+        </div>
+
+        {/* Contact Data */}
+        <h2 className={`${styles.heading3}`}>Contact Data</h2>
+        <div className="flex flex-wrap gap-y-10">
+          {contactFields.map((field) => (
+            <div
+              className="w-1/3 flex flex-col items-left gap-3"
+              key={String(field.name)}
+            >
+              <p className={`${styles.label}`}>{field.label}</p>
+              <p className={`${styles.text}`}>{field.value}</p>
+            </div>
+          ))}
+        </div>
+
+        {/* Address Data */}
+        <h2 className={`${styles.heading3}`}>Address Data</h2>
+        <div className="flex flex-col flex-wrap">
+          <div className="flex">
+            {addressFields.slice(0, 3).map((field) => (
+              <div className="w-1/3" key={field.name}>
+                <p className={`${styles.label} w-1/3`}>{field.label}</p>
+              </div>
+            ))}
+          </div>
+          <div className="flex">
+            {addressFields.slice(0, 3).map((field) => (
+              <p className={`${styles.text} w-1/3`} key={field.name}>
+                {field.value}
+              </p>
+            ))}
+          </div>
+          <div className="flex">
+            {addressFields.slice(3).map((field) => (
+              <div className="w-1/3" key={field.name}>
+                <p className={`${styles.label} w-1/1`}>{field.label}</p>
+              </div>
+            ))}
+          </div>
+          <div className="flex">
+            {addressFields.slice(3).map((field) => (
+              <p className={`${styles.text} w-1/3`} key={field.name}>
+                {field.value}
+              </p>
+            ))}
+          </div>
+        </div>
+
+        {/* Line */}
+        <hr className="m-0 border border-solid border-nao_light_gray" />
+
+        {/* Good */}
+        <div className={`flex flex-col gap-5`}>
+          <h3 className={`${styles.heading3}`}>
+            Goods <QuestionCircleOutlined className="text-sm" />
+          </h3>
+
+          {/* Line */}
+          <hr className="m-0 border border-solid border-nao_light_gray" />
+
+          <Table
+            className={`${styles.text}`}
+            dataSource={CNCodeData}
+            columns={CNCodeColumn}
+            pagination={false}
+          />
+
+          {/* Installation */}
+          <h3 className={`${styles.heading3} `}>
+            Installation <QuestionCircleOutlined className="text-sm" />
+          </h3>
+
+          {/* Line */}
+          <hr className="m-0 border border-solid border-nao_light_gray" />
+
+          <Table
+            className={`${styles.text}`}
+            dataSource={InstallationData}
+            columns={InstallationColumn}
+            pagination={false}
+          />
+        </div>
+      </div>
+    </section>
+  );
+};
+
+export default OperatorDetails;

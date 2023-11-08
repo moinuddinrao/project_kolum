@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 
 import {
   ArrowLeftOutlined,
@@ -9,11 +9,12 @@ import { Table } from "antd";
 
 import { CNCodeData, CNCodeColumn } from "./OperatorData";
 import { InstallationData, InstallationColumn } from "./OperatorData";
+import InstallationDetail from "../InstallationDetail";
 
 import { PrimaryButton } from "@/components/Button/PrimaryButton";
 import styles from "@/assets/Styles";
 
-interface Company {
+interface Operatorinformation {
   name: string | null;
   label: string | null;
   eori: string | null;
@@ -28,21 +29,29 @@ interface Company {
   poBox: string | null;
 }
 
-interface OperatorDetailsProps {
-  selectedData: Partial<Company>;
+interface OperatorinformationProps {
+  selectedData: Partial<Operatorinformation>;
   setSelectedData: any;
 }
 
-const OperatorDetails: React.FC<OperatorDetailsProps> = ({
+const OperatorDetails: React.FC<OperatorinformationProps> = ({
   selectedData,
   setSelectedData,
 }) => {
+  const [selectedRow, setSelectedRow] = useState<{
+    key: string;
+    name: string;
+    city: string;
+    country: string;
+    installationID: string;
+    economicActivity: string;
+    "UN/LOCODE Number": string;
+  } | null>(null);
+
   const handleBackClick = () => {
     console.log(selectedData);
     setSelectedData(null);
   };
-
-  console.log(selectedData);
 
   const infofields = [
     { name: "legalName", label: "Legal Name*", value: selectedData.label },
@@ -89,118 +98,139 @@ const OperatorDetails: React.FC<OperatorDetailsProps> = ({
     { name: "poBox", label: "PO Box", value: "" },
   ];
 
+  function handleonClick(record: {
+    key: string;
+    name: string;
+    city: string;
+    country: string;
+    installationID: string;
+    economicActivity: string;
+    "UN/LOCODE Number": string;
+  }) {
+    setSelectedRow(() => ({ ...record, addressField: addressFields }));
+  }
+
   return (
-    <section id="company-data" className={`${styles.section}`}>
-      <h1 className={`${styles.heading1}`}>Add New Operator</h1>
+    <section id="operator-data" className={`${styles.section}`}>
+      {selectedRow ? (
+        <InstallationDetail
+          selectedRow={selectedRow}
+          setSelectedRow={setSelectedRow}
+        />
+      ) : (
+        <>
+          <h1 className={`${styles.heading1}`}>Add New Operator</h1>
 
-      <div className={`${styles.box} gap-5`}>
-        <div className="flex justify-between items-center">
-          <PrimaryButton onClick={handleBackClick}>
-            <ArrowLeftOutlined />
-          </PrimaryButton>
-          <PrimaryButton>
-            <PlusOutlined />
-            Add {selectedData.label} to your list of operators
-          </PrimaryButton>
-        </div>
-        <h2 className={`${styles.heading2}`}>{selectedData?.label}</h2>
-
-        {/* Basic Information */}
-        <h2 className={`${styles.heading3}`}>Basic Information</h2>
-        <div className="flex flex-row flex-wrap gap-y-10">
-          {infofields.map((field) => (
-            <div
-              className="w-1/3 flex flex-col items-left gap-3"
-              key={String(field.name)}
-            >
-              <p className={`${styles.label}`}>{field.label}</p>
-              <p className={`${styles.text}`}>{field.value}</p>
+          <div className={`${styles.box} gap-5`}>
+            <div className="flex justify-between items-center">
+              <PrimaryButton onClick={handleBackClick}>
+                <ArrowLeftOutlined />
+              </PrimaryButton>
+              <PrimaryButton>
+                <PlusOutlined />
+                Add {selectedData.label} to your list of operators
+              </PrimaryButton>
             </div>
-          ))}
-        </div>
+            <h2 className={`${styles.heading2}`}>{selectedData?.label}</h2>
 
-        {/* Contact Data */}
-        <h2 className={`${styles.heading3}`}>Contact Data</h2>
-        <div className="flex flex-wrap gap-y-10">
-          {contactFields.map((field) => (
-            <div
-              className="w-1/3 flex flex-col items-left gap-3"
-              key={String(field.name)}
-            >
-              <p className={`${styles.label}`}>{field.label}</p>
-              <p className={`${styles.text}`}>{field.value}</p>
+            {/* Basic Information */}
+            <h3 className={`${styles.heading3}`}>Basic Information</h3>
+            <div className="flex flex-row flex-wrap gap-y-10">
+              {infofields.map((field) => (
+                <div
+                  className="w-1/3 flex flex-col items-left gap-3"
+                  key={String(field.name)}
+                >
+                  <p className={`${styles.label}`}>{field.label}</p>
+                  <p className={`${styles.text}`}>{field.value}</p>
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
 
-        {/* Address Data */}
-        <h2 className={`${styles.heading3}`}>Address Data</h2>
-        <div className="flex flex-col flex-wrap">
-          <div className="flex">
-            {addressFields.slice(0, 3).map((field) => (
-              <div className="w-1/3" key={field.name}>
-                <p className={`${styles.label} w-1/1`}>{field.label}</p>
+            {/* Contact Data */}
+            <h3 className={`${styles.heading3}`}>Contact Data</h3>
+            <div className="flex flex-wrap gap-y-10">
+              {contactFields.map((field) => (
+                <div
+                  className="w-1/3 flex flex-col items-left gap-3"
+                  key={String(field.name)}
+                >
+                  <p className={`${styles.label}`}>{field.label}</p>
+                  <p className={`${styles.text}`}>{field.value}</p>
+                </div>
+              ))}
+            </div>
+
+            {/* Address Data */}
+            <h3 className={`${styles.heading3}`}>Address Data</h3>
+            <div className="flex flex-col flex-wrap ">
+              <div className="flex">
+                {addressFields.slice(0, 3).map((field) => (
+                  <div
+                    className="w-1/3 flex flex-col items-left gap-3"
+                    key={field.name}
+                  >
+                    <p className={`${styles.label}`}>{field.label}</p>
+                    <p className={`${styles.text}`} key={field.name}>
+                      {field.value}
+                    </p>
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
-          <div className="flex">
-            {addressFields.slice(0, 3).map((field) => (
-              <p className={`${styles.text} w-1/3`} key={field.name}>
-                {field.value}
-              </p>
-            ))}
-          </div>
-          <div className="flex">
-            {addressFields.slice(3).map((field) => (
-              <div className="w-1/3" key={field.name}>
-                <p className={`${styles.label} w-1/1`}>{field.label}</p>
+              <div className="flex">
+                {addressFields.slice(3).map((field) => (
+                  <div className="w-1/3" key={field.name}>
+                    <p className={`${styles.label}`}>{field.label}</p>
+                    <p className={`${styles.text}`} key={field.name}>
+                      {field.value}
+                    </p>
+                  </div>
+                ))}
               </div>
-            ))}
+            </div>
+
+            {/* Line */}
+            <hr className="m-0 border border-solid border-nao_light_gray" />
+
+            {/* Good */}
+            <div className={`flex flex-col gap-5`}>
+              <h3 className={`${styles.heading3}`}>
+                Goods <QuestionCircleOutlined className="text-sm" />
+              </h3>
+
+              {/* Line */}
+              <hr className="m-0 border border-solid border-nao_light_gray" />
+
+              <Table
+                className={`${styles.text}`}
+                dataSource={CNCodeData}
+                columns={CNCodeColumn}
+                pagination={false}
+              />
+
+              {/* Installation */}
+              <h3 className={`${styles.heading3} `}>
+                Installation <QuestionCircleOutlined className="text-sm" />
+              </h3>
+
+              {/* Line */}
+              <hr className="m-0 border border-solid border-nao_light_gray" />
+
+              <Table
+                className={`${styles.text}`}
+                dataSource={InstallationData}
+                columns={InstallationColumn}
+                pagination={false}
+                onRow={(record) => ({
+                  onClick: () => {
+                    handleonClick(record);
+                  },
+                })}
+              />
+            </div>
           </div>
-          <div className="flex">
-            {addressFields.slice(3).map((field) => (
-              <p className={`${styles.text} w-1/3`} key={field.name}>
-                {field.value}
-              </p>
-            ))}
-          </div>
-        </div>
-
-        {/* Line */}
-        <hr className="m-0 border border-solid border-nao_light_gray" />
-
-        {/* Good */}
-        <div className={`flex flex-col gap-5`}>
-          <h3 className={`${styles.heading3}`}>
-            Goods <QuestionCircleOutlined className="text-sm" />
-          </h3>
-
-          {/* Line */}
-          <hr className="m-0 border border-solid border-nao_light_gray" />
-
-          <Table
-            className={`${styles.text}`}
-            dataSource={CNCodeData}
-            columns={CNCodeColumn}
-            pagination={false}
-          />
-
-          {/* Installation */}
-          <h3 className={`${styles.heading3} `}>
-            Installation <QuestionCircleOutlined className="text-sm" />
-          </h3>
-
-          {/* Line */}
-          <hr className="m-0 border border-solid border-nao_light_gray" />
-
-          <Table
-            className={`${styles.text}`}
-            dataSource={InstallationData}
-            columns={InstallationColumn}
-            pagination={false}
-          />
-        </div>
-      </div>
+        </>
+      )}
     </section>
   );
 };

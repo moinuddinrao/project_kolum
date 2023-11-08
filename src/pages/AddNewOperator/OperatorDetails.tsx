@@ -7,9 +7,9 @@ import {
 } from "@ant-design/icons";
 import { Table } from "antd";
 
-import { CNCodeData, CNCodeColumn } from "./OperatorData";
+import { GoodsData, GoodsColumn } from "./OperatorData";
 import { InstallationData, InstallationColumn } from "./OperatorData";
-import InstallationDetail from "../InstallationDetail";
+import InstallationDetail from "../OperatorInstallation";
 
 import { PrimaryButton } from "@/components/Button/PrimaryButton";
 import styles from "@/assets/Styles";
@@ -111,7 +111,7 @@ const OperatorDetails: React.FC<OperatorinformationProps> = ({
   }
 
   return (
-    <section id="operator-data" className={`${styles.section}`}>
+    <>
       {selectedRow ? (
         <InstallationDetail
           selectedRow={selectedRow}
@@ -203,8 +203,8 @@ const OperatorDetails: React.FC<OperatorinformationProps> = ({
 
               <Table
                 className={`${styles.text}`}
-                dataSource={CNCodeData}
-                columns={CNCodeColumn}
+                dataSource={GoodsData}
+                columns={GoodsColumn}
                 pagination={false}
               />
 
@@ -231,7 +231,7 @@ const OperatorDetails: React.FC<OperatorinformationProps> = ({
           </div>
         </>
       )}
-    </section>
+    </>
   );
 };
 

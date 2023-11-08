@@ -17,10 +17,6 @@ export function AddNewOperator() {
     country: item.city,
     imported_good: item.imported_good,
     Phone_number: item.Phone_number,
-    Production_installation: item.Production_installation,
-    editable: item.editable,
-    dataIndex: item.dataIndex,
-    title: item.title,
     eori: item.eori,
     portalId: item.portalId,
     streetName: item.streetName,
@@ -32,14 +28,6 @@ export function AddNewOperator() {
   const [selectedData, setSelectedData] = useState<{
     value: string;
     label: string;
-    city: string;
-    country: string;
-    imported_good: string;
-    Production_installation: string;
-    Phone_number: string;
-    editable: boolean;
-    dataIndex: string;
-    title: string;
   } | null>(null);
 
   const onChange = (value: string) => {

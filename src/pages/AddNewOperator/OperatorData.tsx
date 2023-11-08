@@ -4,7 +4,7 @@ import { QuestionCircleOutlined } from "@ant-design/icons";
 
 import { PrimaryButton } from "@/components/Button/PrimaryButton";
 
-export const CNCodeData = [
+export const GoodsData = [
   {
     key: "1",
     cnCode: "2507 00 80 - Other kaolinic clays",
@@ -21,7 +21,7 @@ export const CNCodeData = [
   },
 ];
 
-export const CNCodeColumn = [
+export const GoodsColumn = [
   {
     title: "CN Code",
     dataIndex: "cnCode",
@@ -70,16 +70,20 @@ export const InstallationData = [
   {
     key: "1",
     name: "Installation Name 1",
-    City: "New York City",
+    city: "New York City",
     country: "USA",
     "UN/LOCODE Number": "US2M8",
+    installationID: "ID123",
+    economicActivity: "Steel Production",
   },
   {
     key: "2",
     name: "Installation Name 2",
-    City: "Beijing",
+    city: "Beijing",
     country: "China",
     "UN/LOCODE Number": "CNBJS",
+    installationID: "ID456",
+    economicActivity: "Manufacturing",
   },
 ];
 
@@ -91,8 +95,8 @@ export const InstallationColumn = [
   },
   {
     title: "City",
-    dataIndex: "City",
-    key: "City",
+    dataIndex: "city",
+    key: "city",
   },
   {
     title: "Country",
@@ -103,5 +107,15 @@ export const InstallationColumn = [
     title: "UN/LOCODE Number",
     dataIndex: "UN/LOCODE Number",
     key: "UN/LOCODE Number",
+  },
+  {
+    title: "Installation ID",
+    dataIndex: "installationID",
+    key: "installationID",
+  },
+  {
+    title: "Economic Activity",
+    dataIndex: "economicActivity",
+    key: "economicActivity",
   },
 ];

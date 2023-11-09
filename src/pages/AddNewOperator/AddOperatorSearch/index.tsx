@@ -6,11 +6,13 @@ import {
   PlusOutlined,
 } from "@ant-design/icons";
 import { Table } from "antd";
+import { EyeOutlined } from "@ant-design/icons";
 
 import { GoodsData, GoodsColumn } from "./OperatorData";
+// import AddOperatorGoodsDrawer from "./AddOperatorGoodsDrawer";
 import { InstallationData, InstallationColumn } from "./OperatorData";
-import InstallationDetail from "../OperatorInstallation";
 
+import ViewInstallationDetails from "@/components/ViewInstallationDetails";
 import { PrimaryButton } from "@/components/Button/PrimaryButton";
 import styles from "@/assets/Styles";
 
@@ -34,7 +36,7 @@ interface OperatorinformationProps {
   setSelectedData: any;
 }
 
-const OperatorDetails: React.FC<OperatorinformationProps> = ({
+const AddOperatorSearch: React.FC<OperatorinformationProps> = ({
   selectedData,
   setSelectedData,
 }) => {
@@ -110,10 +112,21 @@ const OperatorDetails: React.FC<OperatorinformationProps> = ({
     setSelectedRow(() => ({ ...record, addressField: addressFields }));
   }
 
+  const InstallationColumnWithIcon = [
+    ...InstallationColumn,
+    {
+      title: "View",
+      key: "view",
+      render: (record: any) => (
+        <EyeOutlined onClick={() => handleonClick(record)} />
+      ),
+    },
+  ];
+
   return (
     <>
       {selectedRow ? (
-        <InstallationDetail
+        <ViewInstallationDetails
           selectedRow={selectedRow}
           setSelectedRow={setSelectedRow}
         />
@@ -219,13 +232,8 @@ const OperatorDetails: React.FC<OperatorinformationProps> = ({
               <Table
                 className={`${styles.text}`}
                 dataSource={InstallationData}
-                columns={InstallationColumn}
+                columns={InstallationColumnWithIcon}
                 pagination={false}
-                onRow={(record) => ({
-                  onClick: () => {
-                    handleonClick(record);
-                  },
-                })}
               />
             </div>
           </div>
@@ -235,4 +243,4 @@ const OperatorDetails: React.FC<OperatorinformationProps> = ({
   );
 };
 
-export default OperatorDetails;
+export default AddOperatorSearch;

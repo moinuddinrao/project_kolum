@@ -2,14 +2,15 @@ import React, { useState } from "react";
 
 import { Select } from "antd";
 
-import OperatorDetails from "./OperatorDetails";
+import AddOperatorSearch from "./AddOperatorSearch";
 
 import { originData } from "@/pages/AllOperators/AllOperatorsData";
 import styles from "@/assets/Styles";
+import { PrimaryButton } from "@/components/Button/PrimaryButton";
 
 export interface IAppProps {}
 
-export function AddNewOperator() {
+const AddNewOperator = () => {
   const options = originData.map((item) => ({
     value: item.key,
     label: item.name,
@@ -29,12 +30,13 @@ export function AddNewOperator() {
     value: string;
     label: string;
   } | null>(null);
+  const [fetching, setFetching] = useState(true);
 
   const onChange = (value: string) => {
     const selectedOption = options.find((option) => option.value === value);
     if (selectedOption) {
       setSelectedData(selectedOption);
-      console.log(selectedData);
+      setFetching(false);
     }
     console.log(`selected ${value}`);
   };
@@ -51,7 +53,7 @@ export function AddNewOperator() {
   return (
     <section className={`${styles.section}`}>
       {selectedData ? (
-        <OperatorDetails
+        <AddOperatorSearch
           selectedData={selectedData}
           setSelectedData={setSelectedData}
         />
@@ -80,6 +82,18 @@ export function AddNewOperator() {
               onChange={onChange}
               onSearch={onSearch}
               filterOption={filterOption}
+              notFoundContent={
+                fetching ? (
+                  <div
+                    className={`${styles.box} flex flex-col items-center text-center`}
+                  >
+                    <p className={`${styles.text}`}>
+                      No operators found for your search
+                    </p>
+                    <PrimaryButton>Add new Operator</PrimaryButton>
+                  </div>
+                ) : null
+              }
               options={options}
             />
           </div>
@@ -87,4 +101,5 @@ export function AddNewOperator() {
       )}
     </section>
   );
-}
+};
+export default AddNewOperator;

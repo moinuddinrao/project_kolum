@@ -29,7 +29,7 @@ interface InstallationInformationsProps {
   setSelectedRow: any;
 }
 
-const InstallationDetail: React.FC<InstallationInformationsProps> = ({
+const ViewInstallationDetails: React.FC<InstallationInformationsProps> = ({
   selectedRow,
   setSelectedRow,
 }) => {
@@ -166,4 +166,4 @@ const InstallationDetail: React.FC<InstallationInformationsProps> = ({
   );
 };
 
-export default InstallationDetail;
+export default ViewInstallationDetails;

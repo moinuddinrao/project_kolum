@@ -7,13 +7,14 @@ import OperatorsTable from "./OperatorsTable";
 
 import { PrimaryButton } from "@/components/Button/PrimaryButton";
 import styles from "@/assets/Styles";
+import { ROUTES } from "@/Router";
 
 const AllOperators = () => {
   return (
     <section className={`${styles.section}`}>
       <div className="flex justify-between items-center">
         <h1 className={`${styles.heading1}`}>Your Operator</h1>
-        <Link to={"/company/add-operator"}>
+        <Link to={ROUTES.addOperator}>
           <PrimaryButton>
             <PlusOutlined /> Add new Operator
           </PrimaryButton>

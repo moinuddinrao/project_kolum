@@ -1,10 +1,18 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
-import { QuestionCircleOutlined, DownOutlined } from "@ant-design/icons";
+import { Form } from "antd";
+import {
+  EditOutlined,
+  SaveOutlined,
+  CloseOutlined,
+  QuestionCircleOutlined,
+  DownOutlined,
+} from "@ant-design/icons";
 
 import { PrimaryButton } from "@/components/Button/PrimaryButton";
 import styles from "@/assets/Styles";
 import CustomForm from "@/components/Form/CustomForm";
+import { SecondaryButton } from "@/components/Button/SecondaryButton";
 
 interface Company {
   name: string;
@@ -20,6 +28,11 @@ interface Company {
 }
 
 const Dashboard: React.FC = () => {
+  const [form] = Form.useForm();
+
+  // State to track edit mode
+  const [isUpdate, setIsUpdate] = useState(false);
+
   // State to track form values
   const [initialData, setInitialData] = useState<Company>({
     name: "kolum.earth",
@@ -34,16 +47,23 @@ const Dashboard: React.FC = () => {
     poBox: null,
   });
 
-  const handleLegalInfoSubmit = (values: Partial<Company>) => {
-    // Handle legal information form submission here
-    setInitialData({ ...initialData, ...values });
-    console.log("Legal Information Updated:", values);
-  };
+  // Update form values when initialData changes
+  useEffect(() => {
+    if (isUpdate) {
+      form.setFieldsValue(initialData);
+    }
+  }, [isUpdate, form, initialData]);
 
-  const handleAddressSubmit = (values: Partial<Company>) => {
-    // Handle address form submission here
-    setInitialData({ ...initialData, ...values });
-    console.log("Address Updated:", values);
+  // Handle form submission
+  const handleSubmit = async () => {
+    try {
+      const values = await form.validateFields();
+      setInitialData({ ...initialData, ...values });
+      console.log("Success:", values);
+      setIsUpdate(false);
+    } catch (errorInfo) {
+      console.log("Validation Failed:", errorInfo);
+    }
   };
 
   return (
@@ -51,32 +71,67 @@ const Dashboard: React.FC = () => {
       <h1 className={`${styles.heading1}`}>Company Data</h1>
 
       <div className={`${styles.box}`}>
-        <h2 className={`${styles.heading2}`}>kolum.earth</h2>
+        <div className="flex items-center justify-between">
+          {/* Section Heading */}
+          <h2 className={`${styles.heading2}`}>kolum.earth</h2>
+
+          {/* Action Buttons */}
+          {isUpdate ? (
+            <div className="flex gap-5">
+              <PrimaryButton
+                onClick={() => form.submit()}
+                className="flex justify-center items-center"
+              >
+                Save <SaveOutlined />
+              </PrimaryButton>
+
+              <SecondaryButton
+                onClick={setIsUpdate.bind(null, !isUpdate)}
+                className="flex justify-center items-center"
+              >
+                Close <CloseOutlined />
+              </SecondaryButton>
+            </div>
+          ) : (
+            <PrimaryButton
+              onClick={setIsUpdate.bind(null, !isUpdate)}
+              className="flex justify-center items-center"
+            >
+              Edit <EditOutlined />
+            </PrimaryButton>
+          )}
+        </div>
 
         {/* Legal Information */}
         <CustomForm<Company>
-          formValues={initialData}
-          onSubmit={handleLegalInfoSubmit}
-          title="Legal Information"
-          fields={[
-            { label: "Legal Name", name: "name", required: true },
-            { label: "EORI Number", name: "eori", required: true },
-            { label: "Trader Portal ID Number", name: "portalId" },
-          ]}
-        />
-
-        {/* Address Data*/}
-        <CustomForm<Company>
-          formValues={initialData}
-          onSubmit={handleAddressSubmit}
-          title="Address Data"
-          fields={[
-            { label: "Street Name", name: "streetName", required: true },
-            { label: "Street Number", name: "streetNumber", required: true },
-            { label: "City", name: "city", required: true },
-            { label: "Zip Code", name: "zip", required: true },
-            { label: "Country", name: "country", required: true },
-            { label: "PO Box", name: "poBox" },
+          form={form}
+          initialValues={initialData}
+          isUpdate={isUpdate}
+          onSubmit={handleSubmit}
+          formFields={[
+            {
+              title: "Legal Information",
+              fields: [
+                { label: "Company Name", name: "name", required: true },
+                { label: "EORI Number", name: "eori", required: true },
+                { label: "Portal ID", name: "portalId", required: true },
+              ],
+            },
+            {
+              title: "Address Data",
+              fields: [
+                { label: "Street Name", name: "streetName", required: true },
+                {
+                  label: "Street Number",
+                  name: "streetNumber",
+                  required: true,
+                },
+                { label: "City", name: "city", required: true },
+                { label: "Zip Code", name: "zip", required: true },
+                { label: "Country", name: "country", required: true },
+                { label: "PO Box", name: "poBox" },
+              ],
+            },
           ]}
         />
 

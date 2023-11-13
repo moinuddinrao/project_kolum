@@ -15,7 +15,22 @@ import { originData } from "./AllReportsData";
 import styles from "@/assets/Styles";
 export interface Item {
   key: string;
-  id: number;
+  name: string;
+  city: string;
+  country: string;
+  imported_good: string;
+  Production_installation: string;
+  Phone_number: string;
+  editable: boolean;
+  dataIndex: string;
+  title: string;
+  eori: string;
+  portalId: number;
+  streetName: string;
+  streetNumber: string;
+  zip: number;
+  poBox: string | null;
+  Id: string;
   quarter: string;
   createdAt: string;
   lastUpdated: string;
@@ -107,7 +122,7 @@ const ReportsTable = () => {
   const columns = [
     {
       title: "ID",
-      dataIndex: "id",
+      dataIndex: "Id",
       width: "15%",
       editable: true,
     },

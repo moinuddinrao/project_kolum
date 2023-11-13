@@ -46,7 +46,7 @@ const ReportQuarterForm = ({ onSuccess }: QuarterReportFormProps) => {
             <Form.Item
               name="Quarter"
               className={`h-fit w-full m-0 p-0`}
-              rules={[{ required: true, message: "Please select Quater!" }]}
+              rules={[{ required: true, message: "Please select Quarter!" }]}
             >
               <Select
                 placeholder="Select Quarter"

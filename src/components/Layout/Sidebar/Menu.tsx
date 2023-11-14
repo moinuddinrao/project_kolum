@@ -23,7 +23,7 @@ const Menu: React.FC = () => {
 
   const topMenu: MenuItem[] = [
     {
-      label: "Company Data",
+      label: "Dashboard",
       icon: React.createElement(DashboardOutlined),
       key: ROUTES.dashboard,
       onClick: () => navigate(ROUTES.dashboard),
@@ -31,8 +31,8 @@ const Menu: React.FC = () => {
     {
       label: "Your Operators",
       icon: React.createElement(ProfileOutlined),
-      key: ROUTES.company,
-      onClick: () => navigate(ROUTES.company),
+      key: ROUTES.operators,
+      onClick: () => navigate(ROUTES.operators),
     },
     {
       label: "Import Data",
@@ -59,8 +59,10 @@ const Menu: React.FC = () => {
       label: "Logout",
       icon: React.createElement(LogoutOutlined),
       key: "/logout",
-      className: "text-nao_turquoise",
-      onClick: () => {},
+      className: "text-nao_blue",
+      onClick: () => {
+        navigate(ROUTES.login);
+      },
     },
   ];
 

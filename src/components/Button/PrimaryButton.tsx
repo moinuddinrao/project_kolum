@@ -10,7 +10,7 @@ export const PrimaryButton: React.FC<ButtonProps> = (props) => {
       type="primary"
       htmlType={props?.htmlType}
       onClick={props?.onClick}
-      className={`!bg-nao_dark_gray !rounded-full ${props?.className}`}
+      className={`font-semibold rounded-lg ${props?.className}`}
     >
       {props.children}
     </Button>

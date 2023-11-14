@@ -10,7 +10,7 @@ export const SecondaryButton: React.FC<ButtonProps> = (props) => {
       type="primary"
       htmlType={props?.htmlType}
       onClick={props?.onClick}
-      className={`!bg-nao_middle_gray !text-nao_black !rounded-full ${props?.className}`}
+      className={`!bg-nao_middle_gray hover:!bg-nao_dark_gray !text-nao_black hover:!text-white !rounded-lg ${props?.className}`}
     >
       {props.children}
     </Button>

@@ -31,7 +31,7 @@ const ReportQuarterForm = ({ onSuccess }: QuarterReportFormProps) => {
     <Form onFinish={onSuccess} className={`${styles.box}`}>
       <h5 className={`${styles.heading3}`}>Report Quarter</h5>
 
-      <p className={`${styles.label}`}>
+      <p className={`${styles.text}`}>
         Please select the Quarter for which you want to create the report.
         <br /> We will compile all the data and automatically create the report
         for you.

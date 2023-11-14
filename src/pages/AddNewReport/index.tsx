@@ -5,8 +5,6 @@ import { Drawer, Steps } from "antd";
 import ReportQuarterForm from "./QuarterReportForm";
 import DownloadReportForm from "./DownloadReportForm";
 
-// import styles from "@/assets/Styles";
-
 const { Step } = Steps;
 
 interface AddNewReportProps {

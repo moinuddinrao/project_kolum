@@ -26,7 +26,7 @@ const DownloadReportForm: React.FC<DownloadReportFormtProps> = ({
   };
 
   return (
-    <div className="w-full flex flex-col justify-between gap-5">
+    <div className={`${styles.box}`}>
       <h2 className={`${styles.heading2}`}>Done!</h2>
       <p className={`${styles.text}`}>We generated the report</p>
       <div>

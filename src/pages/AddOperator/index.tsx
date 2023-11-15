@@ -3,12 +3,11 @@ import React, { useState } from "react";
 import { Select } from "antd";
 
 import AddOperatorSearch from "./AddOperatorSearch";
+import AddOperatorManually from "./AddOperatorManually";
 
 import { originData } from "@/pages/AllOperators/AllOperatorsData";
 import styles from "@/assets/Styles";
 import { PrimaryButton } from "@/components/Button/PrimaryButton";
-
-export interface IAppProps {}
 
 const AddNewOperator = () => {
   const options = originData.map((item) => ({
@@ -19,7 +18,7 @@ const AddNewOperator = () => {
     imported_good: item.imported_good,
     Phone_number: item.Phone_number,
     eori: item.eori,
-    portalId: item.portalId,
+    operatorId: item.operatorId,
     streetName: item.streetName,
     streetNumber: item.streetNumber,
     zip: item.zip,
@@ -30,6 +29,7 @@ const AddNewOperator = () => {
     value: string;
     label: string;
   } | null>(null);
+  const [addManuallyOperator, SetAddManuallyOperator] = useState(false);
   const [fetching, setFetching] = useState(true);
 
   const onChange = (value: string) => {
@@ -50,6 +50,10 @@ const AddNewOperator = () => {
     option?: { label: string; value: string },
   ) => (option?.label ?? "").toLowerCase().includes(input.toLowerCase());
 
+  const handleAddManually = () => {
+    SetAddManuallyOperator(true);
+  };
+
   return (
     <section className={`${styles.section}`}>
       {selectedData ? (
@@ -57,6 +61,8 @@ const AddNewOperator = () => {
           selectedData={selectedData}
           setSelectedData={setSelectedData}
         />
+      ) : addManuallyOperator ? (
+        <AddOperatorManually />
       ) : (
         <>
           <div className="flex justify-between items-center">
@@ -90,7 +96,9 @@ const AddNewOperator = () => {
                     <p className={`${styles.text}`}>
                       No operators found for your search
                     </p>
-                    <PrimaryButton>Add new Operator</PrimaryButton>
+                    <PrimaryButton onClick={handleAddManually}>
+                      Add new Operator
+                    </PrimaryButton>
                   </div>
                 ) : null
               }

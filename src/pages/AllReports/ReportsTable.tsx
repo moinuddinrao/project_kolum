@@ -198,7 +198,6 @@ const ReportsTable = () => {
 
   return (
     <Table
-      className={`${styles.label} p-3 overflow-auto`}
       bordered
       dataSource={data}
       columns={columns}

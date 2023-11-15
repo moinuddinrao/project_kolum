@@ -2,9 +2,9 @@ import React, { useState } from "react";
 
 import { PlusOutlined } from "@ant-design/icons";
 
-import OperatorsTable from "./ReportsTable";
+import ReportTable from "./ReportsTable";
 
-import AddNewReport from "@/pages/AddNewReport";
+import AddNewReport from "@/pages/AllReports/AddNewReport";
 import { PrimaryButton } from "@/components/Button/PrimaryButton";
 import styles from "@/assets/Styles";
 
@@ -27,7 +27,7 @@ const AllReports = () => {
         </PrimaryButton>
       </div>
       <AddNewReport visible={isDrawerVisible} onCloseDrawer={onCloseDrawer} />
-      <OperatorsTable />
+      <ReportTable />
     </section>
   );
 };

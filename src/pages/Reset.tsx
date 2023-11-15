@@ -1,138 +1,135 @@
-import React, { useState } from "react";
+import React from "react";
 
-import { Button, Form, Input, Typography } from "antd";
+import { useNavigate } from "react-router-dom";
+import { Form, Input, notification } from "antd";
 
-import Logo from "../assets/logo.svg";
-import Circle1 from "../assets/circle1.svg";
-import Circle2 from "../assets/circle2.svg";
-import Triangle from "../assets/triangle.svg";
+import { ROUTES } from "@/Router";
+import { PrimaryButton } from "@/components/Button/PrimaryButton";
+import styles from "@/assets/Styles";
 
-const Reset = () => {
-  return (
-    <div>
-      <ResetForm />
-    </div>
-  );
+type FieldType = {
+  password: string;
+  confirm: string;
 };
 
+type NotificationType = "success" | "info" | "warning" | "error";
+
+const ResetLink = () => {
+  return <ResetForm />;
+};
+
+export default ResetLink;
+
+// Reset Link Form
 const ResetForm = () => {
-  const [isSuccess, setIsSuccess] = useState(false);
-  const [email, setEmail] = useState("");
-  const [isEmailValid, setIsEmailValid] = useState(true);
+  // Form instance
+  const [form] = Form.useForm();
 
-  const handleResetPassword = () => {
-    // Check if the email is not empty
-    if (email.trim() === "") {
-      setIsEmailValid(false);
-      setIsSuccess(true);
-      return;
+  // Notification instance
+  const [api, contextHolder] = notification.useNotification();
+
+  // Navigate to another page
+  const navigate = useNavigate();
+
+  // Show notification
+  const showNotification = (type: NotificationType) => {
+    // Show success notification
+    if (type === "success") {
+      api[type]({
+        message: "Password Reset Successful",
+        description: "Please login with your new password",
+        duration: 0,
+      });
     }
+    // Show error notification
+    if (type === "error") {
+      api[type]({
+        message: "Password Reset Failed",
+        description: "Please try again",
+        duration: 0,
+      });
+    }
+  };
 
-    // Assuming you have an API call here to send a reset email.
-    // After a successful API call, set isSuccess to true.
-    // You can use a promise or async/await for the API call.
+  // Form submit handler
+  const onFinish = async (values: FieldType) => {
+    try {
+      console.log("Success:", values);
+      form.resetFields();
+      showNotification("success");
+      // Navigate to login page after 5 seconds
+      setTimeout(() => {
+        navigate(ROUTES.login);
+      }, 5000);
+    } catch (error) {
+      console.error("Error:", error);
+      showNotification("error");
+    }
+  };
 
-    // For example:
-    // sendResetEmail(email)
-    //   .then(() => {
-    //     setIsSuccess(true);
-    //   })
-    //   .catch((error) => {
-    //     console.error("Reset email failed:", error);
-    //   });
+  // Form error handler
+  const onFinishFailed = (errorInfo: any) => {
+    console.log("Failed:", errorInfo);
   };
 
   return (
-    <div className="bg-gradient-to-r from-[rgba(199,249,204,0.50)] to-[rgba(56,163,165,0.50)]  w-screen h-screen flex justify-center items-center relative">
-      <Form className="flex flex-col justify-center items-center gap-5 w-1/4">
-        <img width={100} src={Logo} alt="Kolum Logo" className="stroke-2" />
-        <div className="flex flex-col justify-center items-center gap-2 w-full">
-          {!isSuccess ? (
-            <Typography.Title level={1} style={{ fontSize: "40px" }}>
-              Reset Password
-            </Typography.Title>
-          ) : (
-            <Typography.Title level={1} style={{ fontSize: "40px" }}>
-              Success
-            </Typography.Title>
-          )}
-          {!isSuccess && (
-            <Typography className="text-center my-1">
-              Enter the email address associated with your kolum account and
-              we’ll send you a link to reset your password.
-            </Typography>
-          )}
-          {!isSuccess ? (
-            <Input
-              style={{
-                backgroundColor: "transparent",
-                borderColor: isEmailValid ? "#22577A" : "red",
-                borderWidth: "1px",
-                padding: "12px 8px 12px 8px",
-              }}
-              placeholder="Email"
-              onChange={(e) => {
-                setEmail(e.target.value);
-                setIsEmailValid(true);
-              }}
-            />
-          ) : (
-            <Typography className="text-center my-2 text-xl">
-              Your account has been verified!
-            </Typography>
-          )}
-          {!isSuccess && (
-            <Button
-              style={{
-                backgroundColor: "#22577A",
-                color: "#ffffff",
-                width: "100%",
-                height: "100%",
-                paddingTop: "10px",
-                paddingBottom: "10px",
-                borderRadius: "16px",
-                fontWeight: "600",
-              }}
-              onClick={handleResetPassword}
-            >
-              Reset Password
-            </Button>
-          )}
-          {isSuccess && (
-            <Button
-              style={{
-                backgroundColor: "#22577A",
-                color: "#ffffff",
-                width: "100%",
-                height: "100%",
-                paddingTop: "10px",
-                paddingBottom: "10px",
-                borderRadius: "16px",
-                fontWeight: "600",
-              }}
-            >
-              Go to Dashboard
-            </Button>
-          )}
-        </div>
+    <>
+      {contextHolder}
+      <Form
+        form={form}
+        name="ResetForm"
+        onFinish={onFinish}
+        onFinishFailed={onFinishFailed}
+        size="large"
+        className="w-1/4 flex flex-col justify-center items-center gap-5"
+        scrollToFirstError
+      >
+        {/* Page Title */}
+        <h1 className={`${styles.heading1}`}>Reset Password</h1>
+
+        {/* Password */}
+        <Form.Item<FieldType>
+          name="password"
+          className="w-full m-0"
+          rules={[{ required: true, message: "Please input your password!" }]}
+          hasFeedback
+        >
+          <Input.Password
+            placeholder="Password"
+            className="!bg-[transparent] [&>input]:!bg-[transparent]"
+          />
+        </Form.Item>
+
+        {/* Confirm Password */}
+        <Form.Item<FieldType>
+          name="confirm"
+          className="w-full m-0"
+          dependencies={["password"]}
+          rules={[
+            { required: true, message: "Please confirm your password!" },
+            ({ getFieldValue }) => ({
+              validator(_, value) {
+                if (!value || getFieldValue("password") === value)
+                  return Promise.resolve();
+                return Promise.reject(
+                  new Error("The two passwords that you entered do not match!"),
+                );
+              },
+            }),
+          ]}
+          hasFeedback
+        >
+          <Input.Password
+            placeholder="Confirm Password"
+            className="!bg-[transparent] [&>input]:!bg-[transparent]"
+          />
+        </Form.Item>
+
+        {/* Signup Button */}
+        <PrimaryButton htmlType="submit" className="w-full h-auto">
+          Reset Password
+        </PrimaryButton>
       </Form>
-      <img
-        src={Circle1}
-        alt="Circle1"
-        className="absolute top-0 right-0 pointer-events-none"
-      />
-      <img
-        src={Circle2}
-        alt="Circle2"
-        className="absolute bottom-0 left-0 pointer-events-none"
-      />
-      <img
-        src={Triangle}
-        alt="Triangle"
-        className="absolute bottom-0 right-0 pointer-events-none"
-      />
-    </div>
+    </>
   );
 };
-
-export default Reset;

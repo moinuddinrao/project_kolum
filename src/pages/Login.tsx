@@ -1,106 +1,158 @@
 import React from "react";
 
-import { Button, Form, Input, Typography } from "antd";
+import { useNavigate, Link } from "react-router-dom";
+import { Checkbox, Form, Input, notification } from "antd";
 
-import Logo from "../assets/logo.svg";
-import Circle1 from "../assets/circle1.svg";
-import Circle2 from "../assets/circle2.svg";
-import Triangle from "../assets/triangle.svg";
-//  import { useNavigate } from "react-router-dom";
+import { ROUTES } from "@/Router";
+import { PrimaryButton } from "@/components/Button/PrimaryButton";
+import styles from "@/assets/Styles";
 
-// import { ROUTES } from "@/Router";
-// import { signin } from "@/features/auth/service";
-
-const Login = () => {
-  return (
-    <div>
-      <LoginForm />
-    </div>
-  );
+type FieldType = {
+  email: string;
+  password: string;
+  remember: string;
 };
 
-const LoginForm = () => {
-  // const navigate = useNavigate();
-  // const [loginForm] = Form.useForm();
+type NotificationType = "success" | "info" | "warning" | "error";
 
-  // const onFinish = (values: any) => {
-  //   console.log("Success:", values);
-  //   signin({
-  //     email: "safiu799@gmail.com",
-  //     password: "secret",
-  //     callbackUrl: `${window.location.origin}${ROUTES.dashboard}`,
-  //   }).then((res) => {
-  //     console.log({ res: "Here" });
-  //   });
-  // };
-
-  // const onFinishFailed = (errorInfo: any) => {
-  //   console.log("Failed:", errorInfo);
-  // };
-
-  // const navigateToSignup = () => {
-  //   navigate(ROUTES.signup);
-  // };
-
-  return (
-    //wrapper
-    <div className=" bg-gradient-to-r from-[rgba(199,249,204,0.50)] to-[rgba(56,163,165,0.50)]  w-screen h-screen flex justify-center items-center relative">
-      <Form className=" flex flex-col justify-center items-center gap-5 w-1/4">
-        <img width={100} src={Logo} alt="Kolum Logo" className=" stroke-2" />
-        <div className=" flex flex-col justify-center items-center gap-2 w-full">
-          <Typography.Title level={1} style={{ fontSize: "40px" }}>
-            Welcome Back
-          </Typography.Title>
-          <Input
-            style={{
-              backgroundColor: "transparent",
-              borderColor: "#22577A",
-              borderWidth: "1px",
-              padding: "12px 8px 12px 8px",
-            }}
-            placeholder="Email"
-          />
-          <Input
-            type="password"
-            style={{
-              backgroundColor: "transparent",
-              borderColor: "#22577A",
-              borderWidth: "1px",
-              padding: "12px 8px 12px 8px",
-            }}
-            placeholder="Password"
-          />
-          <Typography.Link
-            className=" no-underline font-semibold self-end"
-            style={{ color: "#22577A" }}
-          >
-            Forgot Password?
-          </Typography.Link>
-        </div>
-        <Button
-          style={{
-            backgroundColor: "#22577A",
-            color: "#ffffff",
-            width: "100%",
-            height: "100%",
-            paddingTop: "10px",
-            paddingBottom: "10px",
-            borderRadius: "16px",
-            fontWeight: "600",
-          }}
-        >
-          Login
-        </Button>
-      </Form>
-      <img src={Circle1} alt="Circle1" className=" absolute top-0 right-0" />
-      <img src={Circle2} alt="Circle2" className=" absolute bottom-0 left-0" />
-      <img
-        src={Triangle}
-        alt="Triangle"
-        className=" absolute bottom-0 right-0"
-      />
-    </div>
-  );
+const Login = () => {
+  return <LoginForm />;
 };
 
 export default Login;
+
+// Login Form
+const LoginForm = () => {
+  // Form instance
+  const [form] = Form.useForm();
+
+  // Notification instance
+  const [api, contextHolder] = notification.useNotification();
+
+  // Navigate to another page
+  const navigate = useNavigate();
+
+  // Show notification
+  const showNotification = (type: NotificationType) => {
+    // Show success notification
+    if (type === "success") {
+      api["success"]({
+        message: "Login Successful",
+        description: "Welcome back!",
+        duration: 0,
+      });
+    }
+    // show error notification
+    if (type === "error") {
+      api["error"]({
+        message: "Login Failed",
+        description: "Please try again",
+        duration: 0,
+      });
+    }
+  };
+
+  // Form submit handler
+  const onFinish = (values: FieldType) => {
+    try {
+      console.log("Success:", values);
+      form.resetFields();
+      showNotification("success");
+      // Navigate to dashboard page
+      setTimeout(() => {
+        navigate(ROUTES.dashboard);
+      }, 5000);
+    } catch (error) {
+      console.error("Error:", error);
+      showNotification("error");
+    }
+  };
+
+  // Form error handler
+  const onFinishFailed = (errorInfo: any) => {
+    console.log("Failed:", errorInfo);
+  };
+
+  return (
+    <>
+      {contextHolder}
+      <Form
+        form={form}
+        name="LoginForm"
+        initialValues={{ remember: true }}
+        onFinish={onFinish}
+        onFinishFailed={onFinishFailed}
+        size="large"
+        className="w-1/4 flex flex-col justify-center items-center gap-5"
+      >
+        {/* Page Title */}
+        <h1 className={`${styles.heading1}`}>Log In</h1>
+
+        {/* Email */}
+        <Form.Item<FieldType>
+          name="email"
+          className="w-full m-0"
+          rules={[
+            {
+              type: "email",
+              message: "The input is not valid E-mail!",
+            },
+            {
+              required: true,
+              message: "Please input your E-mail!",
+            },
+          ]}
+        >
+          <Input placeholder="Email" className="!bg-[transparent" />
+        </Form.Item>
+
+        {/* Password */}
+        <Form.Item<FieldType>
+          name="password"
+          className="w-full m-0"
+          rules={[{ required: true, message: "Please input your password!" }]}
+        >
+          <Input.Password
+            placeholder="Password"
+            className="!bg-[transparent] [&>input]:!bg-[transparent]"
+          />
+        </Form.Item>
+
+        <div className="w-full flex justify-between items-center">
+          {/* Remember Me */}
+          <Form.Item<FieldType>
+            name="remember"
+            valuePropName="checked"
+            className="m-0"
+          >
+            <Checkbox className={`${styles.text}`}>Remember me</Checkbox>
+          </Form.Item>
+
+          {/* Reset Password Link */}
+          <Link
+            to={ROUTES.resetLink}
+            className={`${styles.text} !text-nao_blue hover:!text-nao_turquoise`}
+          >
+            Forgot your password?
+          </Link>
+        </div>
+
+        {/* Login Button */}
+        <PrimaryButton htmlType="submit" className="w-full h-auto">
+          Log In
+        </PrimaryButton>
+
+        {/* Signup Link */}
+        <div className="flex gap-2">
+          <p className={`${styles.text} m-0`}>Don&apos;t have an account?</p>
+          <Link
+            to={ROUTES.signup}
+            className={`${styles.text} !text-nao_blue hover:!text-nao_turquoise`}
+          >
+            Sign Up
+          </Link>
+        </div>
+      </Form>
+    </>
+  );
+};

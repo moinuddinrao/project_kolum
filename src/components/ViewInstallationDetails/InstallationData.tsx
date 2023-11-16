@@ -1,67 +1,54 @@
-import React from "react";
-
-import { QuestionCircleOutlined } from "@ant-design/icons";
-
-import { PrimaryButton } from "@/components/Button/PrimaryButton";
-
-export const ProducedGoodsData = [
+export const InstallationData = [
   {
     key: "1",
-    category: "Cement",
-    cnCode: "2507 00 80 - Other kaolinic clays",
-    productionProcess: "Available",
-    carbonPrizePaidData: "Available",
+    name: "Installation Name 1",
+    city: "New York City",
+    country: "USA",
+    "UN/LOCODE Number": "US2M8",
+    imported_good: [
+      "7103 99 00 – Precious stones",
+      "2323 10 10 - Cement clinkers",
+    ],
+    emissionData: ["Available", "Not Available"],
+    productionProcess: ["Available", "Not Available"],
+    carbonPricePaidData: ["Available", "Not Available"],
   },
   {
     key: "2",
-    category: "Cement",
-    cnCode: "2323 10 10 - Cement clinkers",
-    productionProcess: "Not Available",
-    carbonPrizePaidData: "Not Available",
+    name: "Installation Name 2",
+    city: "Beijing",
+    country: "China",
+    "UN/LOCODE Number": "CNBJS",
+    imported_good: [
+      "2507 00 80 - Other kaolinic clays",
+      "8542 31 00 – Microprocessors",
+    ],
+    emissionData: ["Available", "Not Available"],
+    productionProcess: ["Available", "Not Available"],
+    carbonPricePaidData: ["Available", "Not Available"],
   },
 ];
 
-export const ProducedGoodsColumn = [
+// InstallationColumn
+export const InstallationColumn = [
   {
-    title: "Category",
-    dataIndex: "category",
-    key: "category",
+    title: "Name",
+    dataIndex: "name",
+    key: "name",
   },
   {
-    title: "CN Code",
-    dataIndex: "cnCode",
-    key: "cnCode",
+    title: "City",
+    dataIndex: "city",
+    key: "city",
   },
   {
-    title: (
-      <span>
-        Production Process <QuestionCircleOutlined className="text-sm" />
-      </span>
-    ),
-    dataIndex: "productionProcess",
-    key: "productionProcess",
-    render: (text: any) => {
-      if (text) {
-        return text;
-      } else {
-        return <PrimaryButton type="primary">Add</PrimaryButton>;
-      }
-    },
+    title: "Country",
+    dataIndex: "country",
+    key: "country",
   },
   {
-    title: (
-      <span>
-        Carbon Prize Paid Data <QuestionCircleOutlined className="text-sm" />
-      </span>
-    ),
-    dataIndex: "carbonPrizePaidData",
-    key: "carbonPrizePaidData",
-    render: (text: any) => {
-      if (text) {
-        return text;
-      } else {
-        return <PrimaryButton type="primary">Add</PrimaryButton>;
-      }
-    },
+    title: "UN/LOCODE Number",
+    dataIndex: "UN/LOCODE Number",
+    key: "UN/LOCODE Number",
   },
 ];

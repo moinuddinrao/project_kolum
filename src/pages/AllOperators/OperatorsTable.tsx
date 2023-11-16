@@ -1,17 +1,12 @@
 import React, { useState } from "react";
 
 import { Button, Form, Table, Dropdown, Popconfirm, Menu } from "antd";
-import {
-  MoreOutlined,
-  CheckOutlined,
-  CloseOutlined,
-  EditTwoTone,
-  DeleteTwoTone,
-} from "@ant-design/icons";
+import type { TableColumnsType } from "antd";
+import { MoreOutlined, EditTwoTone, DeleteTwoTone } from "@ant-design/icons";
 
-import EditableCell from "./EditableCell";
 import { originData } from "./AllOperatorsData";
 
+import EditOperator from "@/pages/AllOperators/EditOperator";
 import styles from "@/assets/Styles";
 
 export interface Item {
@@ -19,71 +14,43 @@ export interface Item {
   name: string;
   city: string;
   country: string;
-  imported_good: string;
-  Production_installation: string;
+  imported_good: string[];
+  Production_installation: string[];
   Phone_number: string;
   editable: boolean;
   dataIndex: string;
   title: string;
   eori: string;
-  portalId: number;
+  operatorId: number;
   streetName: string;
   streetNumber: string;
   zip: number;
-  poBox: string | null;
+  poBox: string;
+  firstName: string;
+  lastName: string;
+  email: string;
 }
 
 const OperatorsTable = () => {
   const [form] = Form.useForm();
   const [data, setData] = useState(originData);
-  const [editingKey, setEditingKey] = useState("");
-
-  const isEditing = (record: Item) => record.key === editingKey;
-
-  const edit = (record: Partial<Item> & { key: React.Key }) => {
-    form.setFieldsValue({
-      name: "",
-      city: "",
-      country: "",
-      imported_good: "",
-      Production_installation: "",
-      ...record,
-    });
-    setEditingKey(record.key);
-  };
-
-  const cancel = () => {
-    setEditingKey("");
-  };
-
-  const save = async (key: React.Key) => {
-    try {
-      const row = (await form.validateFields()) as Item;
-
-      const newData = [...data];
-      const index = newData.findIndex((item) => key === item.key);
-      if (index > -1) {
-        const item = newData[index];
-        newData.splice(index, 1, {
-          ...item,
-          ...row,
-        });
-        setData(newData);
-        setEditingKey("");
-      } else {
-        newData.push(row);
-        setData(newData);
-        setEditingKey("");
-      }
-    } catch (errInfo) {
-      console.log("Validate Failed:", errInfo);
-    }
-  };
+  const [selectedRow, setSelectedRow] = useState<Item | null>(null); // New state to store the selected record
+  const [isDrawerVisible, setIsDrawerVisible] = useState(false);
 
   const deleteRecord = (record: Item) => {
     const newData = data.filter((item) => item.key !== record.key);
     setData(newData);
     console.log("Delete clicked");
+  };
+
+  const showDrawer = (record: Item) => {
+    setSelectedRow(record);
+    setIsDrawerVisible(true);
+  };
+
+  const onCloseDrawer = () => {
+    setSelectedRow(null);
+    setIsDrawerVisible(false);
   };
 
   const getMenu = (record: Item) => {
@@ -93,7 +60,7 @@ const OperatorsTable = () => {
           className={`${styles.text}`}
           key="edit"
           icon={<EditTwoTone />}
-          onClick={() => edit(record)}
+          onClick={() => showDrawer(record)}
         >
           Edit
         </Menu.Item>
@@ -137,34 +104,22 @@ const OperatorsTable = () => {
       dataIndex: "imported_good",
       width: "15%",
       editable: true,
+      render: (importedGood: string[]) => <span>{importedGood.length}</span>,
     },
     {
       title: "Production Installation",
       dataIndex: "Production_installation",
       width: "25%",
       editable: true,
+      render: (productionInstallation: string[]) => (
+        <span>{productionInstallation.length}</span>
+      ),
     },
     {
       dataIndex: "operation",
       width: "5%",
       render: (_: any, record: Item) => {
-        const editable = isEditing(record);
-        return editable ? (
-          <span className="flex flex-row">
-            <Popconfirm
-              title="Sure to Save"
-              onConfirm={() => save(record.key)}
-              placement="bottomRight"
-            >
-              <Button className="border-0" icon={<CheckOutlined />}></Button>
-            </Popconfirm>
-            <Button
-              className="border-0"
-              icon={<CloseOutlined />}
-              onClick={cancel}
-            ></Button>
-          </span>
-        ) : (
+        return (
           <Dropdown overlay={getMenu(record)} placement="bottomRight">
             <Button
               className="ant-dropdown-link"
@@ -178,40 +133,66 @@ const OperatorsTable = () => {
     },
   ];
 
-  const mergedColumns = columns.map((col) => {
-    if (!col.editable) {
-      return col;
-    }
-    return {
-      ...col,
-      onCell: (record: Item) => ({
-        record,
-        inputType: col.dataIndex === "age" ? "number" : "text",
-        dataIndex: col.dataIndex,
-        title: col.title,
-        editing: isEditing(record),
-      }),
-    };
-  });
+  const expandedRowRender = (record: Item) => {
+    const expandableColumns: TableColumnsType<Item> = [
+      {
+        title: "CN Code",
+        dataIndex: "imported_good",
+        key: "imported_good",
+        render: (importedGood: string[]) => (
+          <div>
+            {importedGood.map((code, index) => (
+              <div key={index}>{code}</div>
+            ))}
+          </div>
+        ),
+      },
+      {
+        title: "Production Installation",
+        dataIndex: "Production_installation",
+        key: "Production_installation",
+        render: (productionInstallation: string[]) => (
+          <div>
+            {productionInstallation.map((installation, index) => (
+              <div key={index}>{installation}</div>
+            ))}
+          </div>
+        ),
+      },
+    ];
+
+    const data = [record];
+
+    return (
+      <Table
+        bordered={false}
+        columns={expandableColumns}
+        dataSource={data}
+        pagination={false}
+        rowKey={(record) => record.toString()}
+      />
+    );
+  };
 
   return (
-    <Form form={form} component={false}>
-      <Table
-        className={`${styles.label} p-3 overflow-auto`}
-        components={{
-          body: {
-            cell: EditableCell,
-          },
-        }}
-        bordered
-        dataSource={data}
-        columns={mergedColumns}
-        rowClassName={(record) => (isEditing(record) ? "editable-row" : "")}
-        pagination={{
-          onChange: cancel,
-        }}
-      />
-    </Form>
+    <>
+      {isDrawerVisible && (
+        <EditOperator
+          visible={isDrawerVisible}
+          onCloseDrawer={onCloseDrawer}
+          selectedRow={selectedRow}
+        />
+      )}
+      <Form form={form} component={false}>
+        <Table
+          // className={`${styles.label} p-3 overflow-auto`}
+          bordered={false}
+          dataSource={data}
+          columns={columns}
+          expandable={{ expandedRowRender }}
+        />
+      </Form>
+    </>
   );
 };
 

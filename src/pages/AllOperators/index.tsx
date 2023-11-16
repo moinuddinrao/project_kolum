@@ -1,26 +1,62 @@
-import React from "react";
+import React, { useState } from "react";
 
 import { PlusOutlined } from "@ant-design/icons";
-import { Link } from "react-router-dom";
 
 import OperatorsTable from "./OperatorsTable";
 
+import AddNewOperator, {
+  BasicInformation,
+  ContactData,
+} from "@/pages/AllOperators/AddNewOperator"; // Import the types here
+import ViewOperatorDetails from "@/pages/ViewOperatorDetails";
 import { PrimaryButton } from "@/components/Button/PrimaryButton";
 import styles from "@/assets/Styles";
-import { ROUTES } from "@/Router";
 
 const AllOperators = () => {
+  const [isDrawerVisible, setIsDrawerVisible] = useState(false);
+  const [savedData, setSavedData] = useState<{
+    basicInformation: BasicInformation;
+    contactData: ContactData;
+  } | null>(null);
+
+  const showDrawer = () => {
+    setIsDrawerVisible(true);
+  };
+
+  const onCloseDrawer = () => {
+    setIsDrawerVisible(false);
+  };
+
+  const handleDataSave = (data: {
+    basicInformation: BasicInformation;
+    contactData: ContactData;
+  }) => {
+    setSavedData(data);
+  };
+
   return (
     <section className={`${styles.section}`}>
-      <div className="flex justify-between items-center">
-        <h1 className={`${styles.heading1}`}>Your Operator</h1>
-        <Link to={ROUTES.addOperator}>
-          <PrimaryButton>
-            <PlusOutlined /> Add new Operator
-          </PrimaryButton>
-        </Link>
-      </div>
-      <OperatorsTable />
+      {savedData ? (
+        <ViewOperatorDetails
+          basicInformation={savedData.basicInformation}
+          contactData={savedData.contactData}
+        />
+      ) : (
+        <>
+          <div className="flex justify-between items-center">
+            <h1 className={`${styles.heading1}`}>Your Operator</h1>
+            <PrimaryButton onClick={showDrawer}>
+              <PlusOutlined /> Add new Operator
+            </PrimaryButton>
+          </div>
+          <AddNewOperator
+            visible={isDrawerVisible}
+            onCloseDrawer={onCloseDrawer}
+            onDataSave={handleDataSave}
+          />
+          <OperatorsTable />
+        </>
+      )}
     </section>
   );
 };

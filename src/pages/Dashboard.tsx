@@ -1,18 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 
 import { Form } from "antd";
-import {
-  EditOutlined,
-  SaveOutlined,
-  CloseOutlined,
-  QuestionCircleOutlined,
-  DownOutlined,
-} from "@ant-design/icons";
+import { QuestionCircleOutlined, DownOutlined } from "@ant-design/icons";
 
 import { PrimaryButton } from "@/components/Button/PrimaryButton";
 import styles from "@/assets/Styles";
 import CustomForm from "@/components/Form/CustomForm";
-import { SecondaryButton } from "@/components/Button/SecondaryButton";
 
 interface Company {
   name: string;
@@ -27,11 +20,8 @@ interface Company {
   poBox: string | null;
 }
 
-const Dashboard: React.FC = () => {
+const Dashboard = () => {
   const [form] = Form.useForm();
-
-  // State to track edit mode
-  const [isUpdate, setIsUpdate] = useState(false);
 
   // State to track form values
   const [initialData, setInitialData] = useState<Company>({
@@ -47,20 +37,12 @@ const Dashboard: React.FC = () => {
     poBox: null,
   });
 
-  // Update form values when initialData changes
-  useEffect(() => {
-    if (isUpdate) {
-      form.setFieldsValue(initialData);
-    }
-  }, [isUpdate, form, initialData]);
-
   // Handle form submission
   const handleSubmit = async () => {
     try {
       const values = await form.validateFields();
       setInitialData({ ...initialData, ...values });
       console.log("Success:", values);
-      setIsUpdate(false);
     } catch (errorInfo) {
       console.log("Validation Failed:", errorInfo);
     }
@@ -71,65 +53,66 @@ const Dashboard: React.FC = () => {
       <h1 className={`${styles.heading1}`}>Company Data</h1>
 
       <div className={`${styles.box}`}>
-        <div className="flex items-center justify-between">
-          {/* Section Heading */}
-          <h2 className={`${styles.heading2}`}>kolum.earth</h2>
-
-          {/* Action Buttons */}
-          {isUpdate ? (
-            <div className="flex gap-5">
-              <PrimaryButton
-                onClick={() => form.submit()}
-                className="flex justify-center items-center"
-              >
-                Save <SaveOutlined />
-              </PrimaryButton>
-
-              <SecondaryButton
-                onClick={setIsUpdate.bind(null, !isUpdate)}
-                className="flex justify-center items-center"
-              >
-                Close <CloseOutlined />
-              </SecondaryButton>
-            </div>
-          ) : (
-            <PrimaryButton
-              onClick={setIsUpdate.bind(null, !isUpdate)}
-              className="flex justify-center items-center"
-            >
-              Edit <EditOutlined />
-            </PrimaryButton>
-          )}
-        </div>
+        <h2 className={`${styles.heading2}`}>kolum.earth</h2>
 
         {/* Legal Information */}
         <CustomForm<Company>
           form={form}
           initialValues={initialData}
-          isUpdate={isUpdate}
           onSubmit={handleSubmit}
           formFields={[
             {
               title: "Legal Information",
               fields: [
-                { label: "Company Name", name: "name", required: true },
-                { label: "EORI Number", name: "eori", required: true },
-                { label: "Portal ID", name: "portalId", required: true },
+                {
+                  type: "input",
+                  label: "Company Name",
+                  name: "name",
+                  required: true,
+                },
+                {
+                  type: "input",
+                  label: "EORI Number",
+                  name: "eori",
+                  required: true,
+                },
+                {
+                  type: "input",
+                  label: "Portal ID",
+                  name: "portalId",
+                  required: true,
+                },
               ],
             },
             {
               title: "Address Data",
               fields: [
-                { label: "Street Name", name: "streetName", required: true },
                 {
+                  type: "input",
+                  label: "Street Name",
+                  name: "streetName",
+                  required: true,
+                },
+                {
+                  type: "input",
                   label: "Street Number",
                   name: "streetNumber",
                   required: true,
                 },
-                { label: "City", name: "city", required: true },
-                { label: "Zip Code", name: "zip", required: true },
-                { label: "Country", name: "country", required: true },
-                { label: "PO Box", name: "poBox" },
+                { type: "input", label: "City", name: "city", required: true },
+                {
+                  type: "input",
+                  label: "Zip Code",
+                  name: "zip",
+                  required: true,
+                },
+                {
+                  type: "input",
+                  label: "Country",
+                  name: "country",
+                  required: true,
+                },
+                { type: "input", label: "PO Box", name: "poBox" },
               ],
             },
           ]}

@@ -6,6 +6,7 @@ module.exports = {
       white: "#FFFFFF",
       black: "#000000",
       green: "#57CC9933",
+      red: "#A30D11",
       brightGreen: "#80ED9933",
       nao_mint: "#C7F9CC",
       nao_bright_green: "#80ED99",

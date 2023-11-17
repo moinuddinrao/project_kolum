@@ -1,26 +1,19 @@
 import React, { useState } from "react";
 
 import { ArrowLeftOutlined, QuestionCircleOutlined } from "@ant-design/icons";
-import {
-  Button,
-  Drawer,
-  Dropdown,
-  Input,
-  Menu,
-  Popconfirm,
-  Space,
-  Table,
-} from "antd";
+import { Button, Dropdown, Menu, Popconfirm, Table } from "antd";
 import type { TableColumnsType } from "antd";
 import {
   MoreOutlined,
   EditTwoTone,
   DeleteTwoTone,
   PlusOutlined,
-  LinkOutlined,
 } from "@ant-design/icons";
 
 import { InstallationData, InstallationColumn } from "./InstallationData";
+import AddNewInstallation from "./AddNewInstallation";
+import RequestMissingData from "./RequestMissingData";
+import AddEmissionData from "./AddEmissionData";
 
 import { SecondaryButton } from "@/components/Button/SecondaryButton";
 import { PrimaryButton } from "@/components/Button/PrimaryButton";
@@ -39,9 +32,10 @@ const ViewInstallationDetails: React.FC<InstallationInformationsProps> = ({
   basicInformation,
   contactData,
 }) => {
-  const [nextStep, setNextStep] = useState(false);
   const [data, setData] = useState(InstallationData);
-  const [open, setOpen] = useState(false);
+  const [openEmissionDataDrawer, setOpenEmissionDataDrawer] = useState(false);
+  const [openRequestDrawer, setOpenRequestDrawer] = useState(false);
+  const [openInstallationDrawer, setOpenInstallationDrawer] = useState(false);
 
   const infofields = [
     { name: "legalName", label: "Legal Name*", value: basicInformation.name },
@@ -91,13 +85,28 @@ const ViewInstallationDetails: React.FC<InstallationInformationsProps> = ({
     console.log("Delete clicked");
   };
 
-  const showDrawer = () => {
-    setNextStep(false);
-    setOpen(true);
+  const showRequestDrawer = () => {
+    setOpenRequestDrawer(true);
   };
 
-  const onClose = () => {
-    setOpen(false);
+  const onCloseRequestDrawer = () => {
+    setOpenRequestDrawer(false);
+  };
+
+  const onCloseInstallationDrawer = () => {
+    setOpenInstallationDrawer(false);
+  };
+
+  const showInstallationDrawer = () => {
+    setOpenInstallationDrawer(true);
+  };
+
+  const onCloseEmissionDrawer = () => {
+    setOpenEmissionDataDrawer(false);
+  };
+
+  const showEmissionDrawer = () => {
+    setOpenEmissionDataDrawer(true);
   };
 
   const getMenu = (record: any) => {
@@ -151,7 +160,9 @@ const ViewInstallationDetails: React.FC<InstallationInformationsProps> = ({
               data === "Available" ? (
                 <PrimaryButton key={index}>{data}</PrimaryButton>
               ) : (
-                <SecondaryButton key={index}>{data}</SecondaryButton>
+                <SecondaryButton key={index} onClick={showEmissionDrawer}>
+                  {data}
+                </SecondaryButton>
               ),
             )}
           </div>
@@ -222,6 +233,20 @@ const ViewInstallationDetails: React.FC<InstallationInformationsProps> = ({
 
   return (
     <>
+      <AddNewInstallation
+        visible={openInstallationDrawer}
+        onCloseDrawer={onCloseInstallationDrawer}
+      />
+
+      <RequestMissingData
+        visible={openRequestDrawer}
+        onCloseDrawer={onCloseRequestDrawer}
+      />
+
+      <AddEmissionData
+        visible={openEmissionDataDrawer}
+        onCloseDrawer={onCloseEmissionDrawer}
+      />
       <h1 className={`${styles.heading1}`}>Add New Operator</h1>
 
       <div className={`${styles.box} my-[5vh]`}>
@@ -229,7 +254,7 @@ const ViewInstallationDetails: React.FC<InstallationInformationsProps> = ({
           <PrimaryButton>
             <ArrowLeftOutlined />
           </PrimaryButton>
-          <PrimaryButton onClick={showDrawer}>
+          <PrimaryButton onClick={showRequestDrawer}>
             <PlusOutlined />
             Request missing data from your Operator
           </PrimaryButton>
@@ -299,89 +324,26 @@ const ViewInstallationDetails: React.FC<InstallationInformationsProps> = ({
         <hr className="m-0 border border-solid border-nao_light_gray" />
 
         {/* Produced Goods */}
-        <h3 className={`${styles.heading3}`}>
-          Installations <QuestionCircleOutlined className="text-sm" />
-        </h3>
+        <div className="flex justify-between items-center">
+          <h3 className={`${styles.heading3}`}>
+            Installations <QuestionCircleOutlined className="text-sm" />
+          </h3>
+          <PrimaryButton onClick={showInstallationDrawer}>
+            <PlusOutlined />
+            Add new Installation
+          </PrimaryButton>
+        </div>
 
         {/* Line */}
         <hr className="m-0 border border-solid border-nao_light_gray" />
 
         <Table
-          className={`${styles.text}`}
           dataSource={InstallationData}
           columns={InstallationColumn}
           expandable={{ expandedRowRender }}
           pagination={false}
         />
       </div>
-
-      <Drawer
-        className={`${styles.text}`}
-        title={
-          <h2 className={`${styles.heading2}`}>
-            Request missing Data from <br />
-            your Operator
-          </h2>
-        }
-        placement="right"
-        size="large"
-        open={open}
-        onClose={onClose}
-      >
-        {nextStep ? (
-          <div className={`${styles.box}`}>
-            <p className={`${styles.label}`}>Thank you, we are done here!</p>
-            <p className={`${styles.label}`}>
-              We will notify you once your operator has filled out the data.
-            </p>
-            <PrimaryButton className="w-fit h-fit !px-5" onClick={onClose}>
-              Okay, great
-            </PrimaryButton>
-          </div>
-        ) : (
-          <>
-            <p className={`${styles.label}`}>
-              You can use kolum to request data that is required for your CBAM
-              report but which you do not have access to directly from your
-              operator. <br /> <br />
-            </p>
-            <p className={`${styles.label}`}>
-              Please provide contact details for your operator below. Your
-              operator will receive a link to an online form where specific
-              information on the installations, emission and production data as
-              well carbon price paid can be added. All information is added to
-              our database and will be automatically attached to your operator
-              and considered in your generated report for each quarter. We will
-              let you know once the operator has filled in the data.
-            </p>
-
-            <div className="flex flex-col m-10 gap-5">
-              <Space.Compact>
-                <Input placeholder="Your contact person’s email" />
-                <Button type="primary"> Send Email</Button>
-              </Space.Compact>
-
-              <Space.Compact>
-                <Input
-                  placeholder="..or copy the invititation link "
-                  suffix={
-                    <Button type="primary" icon={<LinkOutlined />}>
-                      Copy Link
-                    </Button>
-                  }
-                />
-              </Space.Compact>
-            </div>
-
-            <PrimaryButton
-              className="w-fit h-fit !px-5"
-              onClick={() => setNextStep(true)}
-            >
-              Finish
-            </PrimaryButton>
-          </>
-        )}
-      </Drawer>
     </>
   );
 };

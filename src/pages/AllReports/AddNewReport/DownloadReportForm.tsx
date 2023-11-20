@@ -4,7 +4,6 @@ import { DownloadOutlined } from "@ant-design/icons";
 
 import { PrimaryButton } from "@/components/Button/PrimaryButton";
 import { SecondaryButton } from "@/components/Button/SecondaryButton";
-
 import styles from "@/assets/Styles";
 
 interface DownloadReportFormtProps {

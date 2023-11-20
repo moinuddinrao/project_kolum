@@ -6,7 +6,6 @@ import { originData } from "../AllReportsData";
 
 import { PrimaryButton } from "@/components/Button/PrimaryButton";
 import SelectCollapse from "@/components/Collapse/SelectCollapse";
-
 import styles from "@/assets/Styles";
 
 interface QuarterReportFormProps {

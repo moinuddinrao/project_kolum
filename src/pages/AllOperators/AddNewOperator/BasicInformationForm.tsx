@@ -68,12 +68,14 @@ const BasicInformationForm = ({ onSuccess }: BasicInformationProps) => {
       </p>
       <InputCollapse
         header="Basic Information"
+        label=""
         fields={BasicField}
         defaultActiveKey={["1"]}
         onChange={onChange}
       />
       <InputCollapse
         header="Address Data"
+        label=""
         fields={addressFields}
         defaultActiveKey={["0"]}
         onChange={onChange}

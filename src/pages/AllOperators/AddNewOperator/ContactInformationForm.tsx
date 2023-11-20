@@ -52,6 +52,7 @@ const ContactInformationForm = ({ onSuccess }: ContactDataProps) => {
       </p>
       <InputCollapse
         header="Basic Information"
+        label=""
         fields={contactFields}
         defaultActiveKey={["1"]}
         onChange={onChange}

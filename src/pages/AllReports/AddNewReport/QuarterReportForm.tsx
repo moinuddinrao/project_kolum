@@ -5,8 +5,9 @@ import { Form, Alert } from "antd";
 import { originData } from "../AllReportsData";
 
 import { PrimaryButton } from "@/components/Button/PrimaryButton";
-import styles from "@/assets/Styles";
 import SelectCollapse from "@/components/Collapse/SelectCollapse";
+
+import styles from "@/assets/Styles";
 
 interface QuarterReportFormProps {
   onSuccess: (values: boolean) => void;
@@ -40,6 +41,7 @@ const ReportQuarterForm = ({ onSuccess }: QuarterReportFormProps) => {
         selectField={{
           name: "Quarter",
           placeholder: "Quarter",
+          label: "",
           options: pendingItems.map((item) => ({
             key: item.key,
             value: item.quarter,

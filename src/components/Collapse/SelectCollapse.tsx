@@ -9,7 +9,7 @@ interface SelectCollapseProps {
   selectField: {
     name: string;
     placeholder: string;
-    label: string | null;
+    label: React.ReactNode; // Use React.ReactNode for JSX elements
     options: Array<{ key: string; value: string; name: string }>;
     onChange: (value: string) => void;
   };
@@ -24,6 +24,7 @@ const SelectCollapse: React.FC<SelectCollapseProps> = ({
   return (
     <Collapse defaultActiveKey={["0"]} onChange={onChange}>
       <Panel header={header} key="1">
+        <p>{selectField.label}</p>
         <div className="w-full flex justify-evenly gap-10">
           <Form.Item
             name={selectField.name}
@@ -36,7 +37,7 @@ const SelectCollapse: React.FC<SelectCollapseProps> = ({
             ]}
           >
             <Select
-              placeholder={`Select ${selectField.placeholder}`}
+              placeholder={`${selectField.placeholder}`}
               onChange={selectField.onChange}
             >
               {selectField.options.map((option) => (

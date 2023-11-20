@@ -13,19 +13,19 @@ interface BasicInformationFormProps {
   selectedRow?: Operatorinformation | null;
 }
 
+type Field = {
+  name: string;
+  placeholder: string;
+  value: string | number | undefined;
+  required?: boolean; // Add this line
+};
+
 const BasicInformationForm = ({
   onSuccess,
   selectedRow,
 }: BasicInformationFormProps) => {
   const onChange = (key: string | string[]) => {
     console.log(key);
-  };
-
-  type Field = {
-    name: string;
-    placeholder: string;
-    value: string | number | undefined;
-    required?: boolean; // Add this line
   };
 
   const BasicField: Field[] = [
@@ -73,12 +73,14 @@ const BasicInformationForm = ({
       </p>
       <InputCollapse
         header="Basic Information"
+        label=""
         fields={BasicField}
         defaultActiveKey={["1"]}
         onChange={onChange}
       />
       <InputCollapse
         header="Address Data"
+        label=""
         fields={addressFields}
         defaultActiveKey={["0"]}
         onChange={onChange}

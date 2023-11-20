@@ -74,6 +74,7 @@ const ContactInformationForm = ({
           </p>
           <InputCollapse
             header="Contact Data"
+            label=""
             fields={contactFields}
             defaultActiveKey={["1"]}
             onChange={onChange}

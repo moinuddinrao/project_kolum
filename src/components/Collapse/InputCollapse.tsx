@@ -6,6 +6,7 @@ const { Panel } = Collapse;
 
 interface InputCollapseProps {
   header: string;
+  label: string;
   fields: Array<{
     name: string;
     placeholder: string;

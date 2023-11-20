@@ -2,21 +2,26 @@ import React from "react";
 
 import { createBrowserRouter, redirect } from "react-router-dom";
 
-import Layout from "@/components/Layout";
 import AuthLayout from "@/components/AuthLayout";
-import Login from "@/pages/Login";
 import Signup from "@/pages/Signup";
+import Login from "@/pages/Login";
+import ResetLink from "@/pages/ResetLink";
+import Reset from "@/pages/Reset";
+import Layout from "@/components/Layout";
 import CompanySetup from "@/pages/CompanySetup";
 import Dashboard from "@/pages/Dashboard";
 import AllOperators from "@/pages/AllOperators";
-import ResetLink from "@/pages/ResetLink";
-import Reset from "@/pages/Reset";
+import AllImports from "@/pages/AllImports";
+import AllReports from "@/pages/AllReports";
+import Settings from "@/pages/Settings";
 
 export const ROUTES = {
-  login: "/login",
   signup: "/signup",
   terms: "/terms",
-  companySetup: "/conpany-setup",
+  login: "/login",
+  resetLink: "/reset-link",
+  reset: "/reset",
+  companySetup: "/company-setup",
   dashboard: "/dashboard",
   operators: "/operators",
   addOperator: "/add-operator",
@@ -24,8 +29,6 @@ export const ROUTES = {
   imports: "/imports",
   reports: "/reports",
   settings: "/settings",
-  reset: "/reset",
-  resetLink: "/reset-link",
 };
 
 const Router = createBrowserRouter([
@@ -74,15 +77,15 @@ const Router = createBrowserRouter([
       },
       {
         path: ROUTES.imports,
-        element: <Dashboard />,
+        element: <AllImports />,
       },
       {
         path: ROUTES.reports,
-        element: <Dashboard />,
+        element: <AllReports />,
       },
       {
         path: ROUTES.settings,
-        element: <Dashboard />,
+        element: <Settings />,
       },
     ],
   },

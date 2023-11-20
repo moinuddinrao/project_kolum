@@ -9,6 +9,7 @@ interface SelectCollapseProps {
   selectField: {
     name: string;
     placeholder: string;
+    label: string | null;
     options: Array<{ key: string; value: string; name: string }>;
     onChange: (value: string) => void;
   };

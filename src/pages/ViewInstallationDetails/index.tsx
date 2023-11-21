@@ -34,6 +34,7 @@ const ViewInstallationDetails: React.FC<InstallationInformationsProps> = ({
 }) => {
   const [data, setData] = useState(InstallationData);
   const [openEmissionDataDrawer, setOpenEmissionDataDrawer] = useState(false);
+  const [emissionData, setEmissionData] = useState<any>(null);
   const [openRequestDrawer, setOpenRequestDrawer] = useState(false);
   const [openInstallationDrawer, setOpenInstallationDrawer] = useState(false);
 
@@ -105,8 +106,9 @@ const ViewInstallationDetails: React.FC<InstallationInformationsProps> = ({
     setOpenEmissionDataDrawer(false);
   };
 
-  const showEmissionDrawer = () => {
+  const showEmissionDrawer = (cnCode: string) => {
     setOpenEmissionDataDrawer(true);
+    setEmissionData(cnCode);
   };
 
   const getMenu = (record: any) => {
@@ -154,13 +156,18 @@ const ViewInstallationDetails: React.FC<InstallationInformationsProps> = ({
         title: "Emission Data",
         dataIndex: "emissionData",
         key: "emissionData",
-        render: (emissionData: string[]) => (
+        render: (emissionData: string[], record: any) => (
           <div className="flex flex-col gap-5">
             {emissionData.map((data, index) =>
               data === "Available" ? (
                 <PrimaryButton key={index}>{data}</PrimaryButton>
               ) : (
-                <SecondaryButton key={index} onClick={showEmissionDrawer}>
+                <SecondaryButton
+                  key={index}
+                  onClick={() =>
+                    showEmissionDrawer(record.imported_good[index])
+                  }
+                >
                   {data}
                 </SecondaryButton>
               ),
@@ -230,7 +237,6 @@ const ViewInstallationDetails: React.FC<InstallationInformationsProps> = ({
       />
     );
   };
-
   return (
     <>
       <AddNewInstallation
@@ -246,6 +252,7 @@ const ViewInstallationDetails: React.FC<InstallationInformationsProps> = ({
       <AddEmissionData
         visible={openEmissionDataDrawer}
         onCloseDrawer={onCloseEmissionDrawer}
+        cnCode={emissionData}
       />
       <h1 className={`${styles.heading1}`}>Add New Operator</h1>
 

@@ -4,7 +4,7 @@ import {
   BasicInformation,
   ContactData,
 } from "@/pages/AllOperators/AddNewOperator";
-import ViewInstallationDetails from "@/components/ViewInstallationDetails";
+import ViewInstallationDetails from "@/pages/ViewInstallationDetails";
 
 interface ViewOperatorDetailsProps {
   basicInformation: BasicInformation;

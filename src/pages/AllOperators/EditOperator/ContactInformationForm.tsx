@@ -1,13 +1,15 @@
 import React, { useState } from "react";
 
-import { Form } from "antd";
+import { Form, Collapse } from "antd";
 
 import { Operatorinformation } from ".";
 
 import { PrimaryButton } from "@/components/Button/PrimaryButton";
-import styles from "@/assets/Styles";
+import { SecondaryButton } from "@/components/Button/SecondaryButton";
 import InputCollapse from "@/components/Collapse/InputCollapse";
+import styles from "@/assets/Styles";
 
+const { Panel } = Collapse;
 interface ContactInformationFormProps {
   onSuccess: (values: Operatorinformation) => void;
   selectedRow?: Operatorinformation | null;
@@ -25,9 +27,15 @@ const ContactInformationForm = ({
   selectedRow,
 }: ContactInformationFormProps) => {
   const [onComplete, setOnComplete] = useState<boolean | undefined>();
+  const [activeKey, setActiveKey] = useState(0);
 
-  const onChange = (key: string | string[]) => {
-    console.log(key);
+  const handleNext = async () => {
+    try {
+      await form.validateFields();
+      setActiveKey(activeKey + 1);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const contactFields: Field[] = [
@@ -45,8 +53,11 @@ const ContactInformationForm = ({
     { name: "phone", placeholder: "Phone", value: selectedRow?.Phone_number },
   ];
 
+  const [form] = Form.useForm();
+
   return (
     <Form
+      form={form}
       onFinish={onSuccess}
       className="w-full flex flex-col justify-between gap-10"
     >
@@ -57,12 +68,14 @@ const ContactInformationForm = ({
           <p
             className={`${styles.text}`}
           >{`${selectedRow?.name} is Updated`}</p>
-          <PrimaryButton
-            onClick={() => onSuccess(selectedRow as Operatorinformation)}
-            className="w-fit h-fit !px-5"
-          >
-            Finish
-          </PrimaryButton>
+          <div className="flex justify-end gap-5">
+            <PrimaryButton
+              onClick={() => onSuccess(selectedRow as Operatorinformation)}
+              className="w-fit h-fit !px-5"
+            >
+              Finish
+            </PrimaryButton>
+          </div>
         </div>
       ) : (
         <>
@@ -72,13 +85,20 @@ const ContactInformationForm = ({
             First, please fill in some basic information and address data for
             your Operator.
           </p>
-          <InputCollapse
-            header="Contact Data"
-            label=""
-            fields={contactFields}
-            defaultActiveKey={["1"]}
-            onChange={onChange}
-          />
+          <Collapse activeKey={activeKey}>
+            <Panel header="Contact Information" key="0">
+              <InputCollapse fields={contactFields} />
+              <div className="w-full flex justify-end mt-5">
+                {/*Next Button */}
+                <SecondaryButton
+                  onClick={handleNext}
+                  className="w-fit h-fit !px-5"
+                >
+                  Next
+                </SecondaryButton>
+              </div>
+            </Panel>
+          </Collapse>
           <div className="flex justify-end gap-5">
             {/* Next Button */}
             <PrimaryButton

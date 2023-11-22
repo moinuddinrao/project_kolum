@@ -38,7 +38,7 @@ const OperatorsTable = () => {
   const [isDrawerVisible, setIsDrawerVisible] = useState(false);
 
   const deleteRecord = (record: Item) => {
-    const newData = data.filter((item) => item.key !== record.key);
+    const newData = data.filter((items) => items.key !== record.key);
     setData(newData);
     console.log("Delete clicked");
   };

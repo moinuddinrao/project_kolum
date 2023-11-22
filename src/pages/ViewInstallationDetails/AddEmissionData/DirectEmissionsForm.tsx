@@ -1,13 +1,14 @@
-import React from "react";
+import React, { useState } from "react";
 
-import { Form, Select, Input, Collapse } from "antd";
+import { Form, Collapse } from "antd";
 
 import { DirectEmissions } from ".";
 
 import { PrimaryButton } from "@/components/Button/PrimaryButton";
-import styles from "@/assets/Styles";
 import SelectCollapse from "@/components/Collapse/SelectCollapse";
 import InputCollapse from "@/components/Collapse/InputCollapse";
+import styles from "@/assets/Styles";
+import { SecondaryButton } from "@/components/Button/SecondaryButton";
 
 const { Panel } = Collapse;
 
@@ -46,85 +47,118 @@ const reportingMethodologyOptions = [
   },
 ];
 
-const BasicField = [
+const descriptionReportingMethodology: {
+  name: string;
+  placeholder: string;
+  required?: boolean;
+  value: string | number | undefined;
+  inputType?: "input" | "textarea";
+}[] = [
   {
-    name: "name",
+    name: "nameOfMethodology",
     placeholder: "Name of your applied Monitoring and Reporting Method.",
     value: "",
+    inputType: "input",
   },
   {
-    name: "operatorId",
+    name: "descriptionOfMethodology",
     placeholder:
       "Detailed description of applied Monitoring and Reporting Method.",
     value: "",
+    inputType: "textarea",
   },
 ];
 
 const DirectEmissionsForm = ({ onSuccess, cnCode }: DirectEmissionsProps) => {
-  const [selected, setSelected] = React.useState<string | null>(null);
+  const [selected, setSelected] = useState("");
+  const [activeKey, setActiveKey] = useState(0);
 
-  const onChange = (key: string | string[]) => {
-    console.log(key);
-    setSelected(key as string);
-  };
   console.log(selected);
 
+  const handleNext = async () => {
+    try {
+      await form.validateFields();
+      setActiveKey(activeKey + 1);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const [form] = Form.useForm();
   return (
-    <Form onFinish={onSuccess} className={`${styles.box} gap-1`}>
-      <SelectCollapse
-        header="Type of Determination"
-        selectField={{
-          name: "Y/N",
-          placeholder: "Select",
-          label: (
-            <div>
-              Do you have Actual Data for the Direct Emissions caused during the
-              production of the good:
-              <ul>
-                <li>{cnCode}</li>
-              </ul>
-            </div>
-          ),
-          options: [
-            { key: "yes", value: "Yes", name: "yes" },
-            { key: "no", value: "No", name: "no" },
-          ],
-          onChange: (value) => setSelected(value),
-        }}
-        onChange={onChange}
-      />
+    <Form form={form} onFinish={onSuccess} className={`${styles.box} gap-1`}>
+      <Collapse activeKey={activeKey}>
+        {/* First Panel: Type of Determination */}
+        <Panel header="Type of Determination" key="0">
+          <SelectCollapse
+            selectField={{
+              name: "typeOfDertermination",
+              placeholder: "Select",
+              label: (
+                <div>
+                  Do you have Actual Data for the Direct Emissions caused during
+                  the production of the good:
+                  <ul>
+                    <li>{cnCode}</li>
+                  </ul>
+                </div>
+              ),
+              options: [
+                { key: "yes", value: "Yes", name: "yes" },
+                { key: "no", value: "No", name: "no" },
+              ],
+              onChange: (value) => setSelected(value),
+            }}
+          />
+          <div className="w-full flex justify-end mt-5">
+            {/*Next Button */}
+            <SecondaryButton onClick={handleNext} className="w-fit h-fit !px-5">
+              Next
+            </SecondaryButton>
+          </div>
+        </Panel>
 
-      <SelectCollapse
-        header="Type of applicable Reporting Methodology"
-        selectField={{
-          name: "typeOfApplicableReportingMethodology",
-          placeholder:
-            "Select the Type of Determination of the direct emission data",
-          label: (
-            <div>
-              Where does the specific direct emission data for the good
-              <ul>
-                <li>{cnCode}</li>
-              </ul>
-              stem from?
-            </div>
-          ),
-          options: reportingMethodologyOptions,
-          onChange: (value) => setSelected(value),
-        }}
-        onChange={onChange}
-      />
+        {/* Second Panel: Type of applicable Reporting Methodology */}
+        <Panel header="Type of applicable Reporting Methodology" key="1">
+          <SelectCollapse
+            selectField={{
+              name: "reportingMethodology",
+              placeholder:
+                "Select the Type of Determination of the direct emission data",
+              label: (
+                <div>
+                  Where does the specific direct emission data for the good
+                  <ul>
+                    <li>{cnCode}</li>
+                  </ul>
+                  stem from?
+                </div>
+              ),
+              options: reportingMethodologyOptions,
+              onChange: (value) => setSelected(value),
+            }}
+          />
+          <div className="w-full flex justify-end mt-5">
+            {/*Next Button */}
+            <SecondaryButton onClick={handleNext} className="w-fit h-fit !px-5">
+              Next
+            </SecondaryButton>
+          </div>
+        </Panel>
 
-      <InputCollapse
-        header="Description of applicable Reporting Methodology"
-        label="Basic Information"
-        fields={BasicField}
-        defaultActiveKey={["1"]}
-        onChange={onChange}
-      />
+        {/* Third Panel: Description of applicable Reporting Methodology */}
+        <Panel header="Description of applicable Reporting Methodology" key="2">
+          <InputCollapse fields={descriptionReportingMethodology} />
+          <div className="w-full flex justify-end mt-5">
+            {/*Next Button */}
+            <SecondaryButton onClick={handleNext} className="w-fit h-fit !px-5">
+              Next
+            </SecondaryButton>
+          </div>
+        </Panel>
 
-      <Collapse defaultActiveKey={["1"]}>
-        <Panel header="Direct Embedded Emissions" key="1">
+        {/* Fourth Panel: Direct Embedded Emissions */}
+        <Panel header="Direct Embedded Emissions" key="3">
           <p>
             What was the produced net mass of the good:
             <ul>
@@ -132,58 +166,55 @@ const DirectEmissionsForm = ({ onSuccess, cnCode }: DirectEmissionsProps) => {
             </ul>
             during the Monitoring Period?
           </p>
-          <div className="w-full flex justify-around gap-10">
-            <Form.Item
-              name="producedNetMass"
-              rules={[
+
+          <p className={`${styles.label} !my-2`}>Direct Embedded Emissions</p>
+          <div className="w-full flex flex-end justify-around gap-5">
+            <InputCollapse
+              fields={[
                 {
+                  name: "directEmbeddedEmissions",
+                  placeholder: "Enter Direct embedded Emissions",
                   required: true,
-                  message: `Please input the produced net mass of ${cnCode}!`,
+                  value: "",
+                  inputType: "input",
                 },
-                {
-                  type: "number",
-                  message: "Input must be a number!",
-                  transform: (value) => parseFloat(value), // Ensure it is treated as a number
-                },
-                {
-                  validator: (_, value) => {
-                    const numericValue = parseFloat(value);
-                    if (isNaN(numericValue) || numericValue < 0) {
-                      return Promise.reject(
-                        "Produced net mass must be a positive number!",
-                      );
-                    }
-                    return Promise.resolve();
+              ]}
+            />
+            <SelectCollapse
+              selectField={{
+                name: "directEmbeddedEmissionsUnit",
+                label: "",
+                placeholder: "Select Measurement Unit",
+                options: [
+                  {
+                    key: "tons",
+                    value: "Tons of CO2 emitted",
+                    name: "Tons of CO2 emitted",
                   },
-                },
-              ]}
-            >
-              <Input placeholder="Enter Direct embedded Emissions" />
-            </Form.Item>
-            <Form.Item
-              name="measurementUnit"
-              rules={[
-                {
-                  required: true,
-                  message: `Please select the Measurement Unit!`,
-                },
-              ]}
-            >
-              <Select
-                defaultValue="Tons of CO2 emitted"
-                options={[
-                  { value: "Tons", label: "Tons" },
-                  { value: "Megawatt", label: "Megawatt" },
-                ]}
-              />
-            </Form.Item>
+                ],
+                onChange: (value) => value,
+              }}
+            />
+          </div>
+          <div className="w-full flex justify-end mt-5">
+            {/*Next Button */}
+            <SecondaryButton onClick={handleNext} className="w-fit h-fit !px-5">
+              Next
+            </SecondaryButton>
           </div>
         </Panel>
       </Collapse>
-      {/* Next Button */}
-      <PrimaryButton htmlType="submit" className="w-fit h-fit !px-5">
-        Next
-      </PrimaryButton>
+      <div className="flex justify-end gap-5">
+        <PrimaryButton
+          htmlType="submit"
+          className={`w-fit h-fit !px-5 ${
+            activeKey !== 4 &&
+            "opacity-50 pointer-events-none cursor-not-allowed"
+          }`}
+        >
+          Next
+        </PrimaryButton>
+      </div>
     </Form>
   );
 };

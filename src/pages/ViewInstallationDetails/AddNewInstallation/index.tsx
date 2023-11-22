@@ -5,6 +5,7 @@ import { Drawer, Steps } from "antd";
 import ImportedGoodsForm from "./ImportedGoodsForm";
 import InstallationDataForm from "./InstallationDataForm";
 
+import { PrimaryButton } from "@/components/Button/PrimaryButton";
 import styles from "@/assets/Styles";
 
 const { Step } = Steps;
@@ -19,8 +20,8 @@ export interface InstallationData {
 }
 
 export interface ImportedGoods {
-  category: string;
-  subCategory: string;
+  goodsCategory: string;
+  cnCode: string;
   description: string;
 }
 
@@ -47,8 +48,8 @@ const AddNewInstallation: React.FC<AddInstallationProps> = ({
       latitude: 0,
     },
     importedGoods: {
-      category: "",
-      subCategory: "",
+      goodsCategory: "",
+      cnCode: "",
       description: "",
     },
   });
@@ -69,7 +70,10 @@ const AddNewInstallation: React.FC<AddInstallationProps> = ({
     setcurrentStep(currentStep + 1);
   };
 
-  console.log(data);
+  const handleCloseDrawer = () => {
+    onCloseDrawer();
+    setcurrentStep(0);
+  };
 
   const steps = [
     {
@@ -80,7 +84,32 @@ const AddNewInstallation: React.FC<AddInstallationProps> = ({
       title: "Imported Goods",
       content: <ImportedGoodsForm onSuccess={handleImportedGoods} />,
     },
+    {
+      title: "Finish",
+      content: (
+        <div className={`${styles.box}`}>
+          <p className={`${styles.heading3}`}>Done!</p>
+          <p className={`${styles.text}`}>
+            The Installation and produced goods were added.
+          </p>
+          <div className="w-full flex justify-end mt-5">
+            <PrimaryButton
+              className="w-fit h-fit !px-5"
+              onClick={handleCloseDrawer}
+            >
+              Finish
+            </PrimaryButton>
+          </div>
+        </div>
+      ),
+    },
   ];
+
+  const items = steps
+    .filter((_, index) => index !== steps.length - 1)
+    .map((items) => ({ key: items.title, title: items.title }));
+
+  console.log(data);
   return (
     <>
       <Drawer
@@ -89,9 +118,9 @@ const AddNewInstallation: React.FC<AddInstallationProps> = ({
         placement="right"
         size="large"
         open={visible}
-        onClose={onCloseDrawer}
+        onClose={handleCloseDrawer}
       >
-        <Steps current={currentStep}>
+        <Steps current={currentStep} items={items}>
           {steps.map((item) => (
             <Step key={item.title} title={item.title} />
           ))}

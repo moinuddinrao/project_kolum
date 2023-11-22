@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-import { Form } from "antd";
+import { Form, Collapse } from "antd";
 
 import { InstallationData } from ".";
 
@@ -8,74 +8,94 @@ import { PrimaryButton } from "@/components/Button/PrimaryButton";
 import SelectCollapse from "@/components/Collapse/SelectCollapse";
 import InputCollapse from "@/components/Collapse/InputCollapse";
 import styles from "@/assets/Styles";
+import { SecondaryButton } from "@/components/Button/SecondaryButton";
+
+const { Panel } = Collapse;
 
 interface InstallationDataProps {
   onSuccess: (values: InstallationData) => void;
 }
 
-const InstallationDataForm = ({ onSuccess }: InstallationDataProps) => {
-  const [selectedOption, setSelectedOption] = useState<string | null>(null);
+const options = [
+  {
+    key: "sameAddress",
+    address: "SameAddress",
+    name: "Same as Operator Address",
+  },
+  { key: "otherAddress", address: "OtherAddress", name: "Other Address" },
+];
 
-  const onChange = (key: string | string[]) => {
-    console.log(key);
-    setSelectedOption(key as string);
-    console.log(selectedOption);
+const addressFields = [
+  { name: "streetName", placeholder: "Street", value: "" },
+  {
+    name: "streetNumber",
+    placeholder: "Street Number",
+    value: "",
+  },
+  { name: "city", placeholder: "City", value: "" },
+  {
+    name: "country",
+    placeholder: "Country",
+    value: "",
+  },
+  { name: "poBox", placeholder: "P/O Box", value: "" },
+];
+
+const InstallationDataForm = ({ onSuccess }: InstallationDataProps) => {
+  const [activeKey, setActiveKey] = useState(0);
+
+  const handleNext = async () => {
+    try {
+      await form.validateFields();
+      setActiveKey(activeKey + 1);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
-  const options = [
-    {
-      key: "sameAddress",
-      address: "SameAddress",
-      name: "Same as Operator Address",
-    },
-    { key: "otherAddress", address: "OtherAddress", name: "Other Address" },
-  ];
+  const [form] = Form.useForm();
 
-  const addressFields = [
-    { name: "streetName", placeholder: "Street", value: "" },
-    {
-      name: "streetNumber",
-      placeholder: "Street Number",
-      value: "",
-    },
-    { name: "city", placeholder: "City", value: "" },
-    {
-      name: "country",
-      placeholder: "Country",
-      value: "",
-    },
-    { name: "poBox", placeholder: "P/O Box", value: "" },
-  ];
   return (
-    <Form onFinish={onSuccess} className={`${styles.box}`}>
+    <Form form={form} onFinish={onSuccess} className={`${styles.box}`}>
       <h5 className={`${styles.heading3}`}>Add new Installation</h5>
-      <SelectCollapse
-        header="General Information"
-        selectField={{
-          name: "Address",
-          label: "What is the exact address of the Installation?",
-          placeholder: "Select Installation Address",
-          options: options.map((item) => ({
-            key: item.key,
-            value: item.address,
-            name: item.name,
-          })),
-          onChange: (value) => setSelectedOption(value),
-        }}
-        onChange={onChange}
-      />
-      <InputCollapse
-        header="Address Data"
-        label=""
-        fields={addressFields}
-        defaultActiveKey={["0"]}
-        onChange={onChange}
-      />
-
+      <Collapse activeKey={activeKey}>
+        {/* First Panel: Contact Information */}
+        <Panel header="Contact Information" key="0">
+          <SelectCollapse
+            selectField={{
+              name: "Address",
+              label: "What is the exact address of the Installation?",
+              placeholder: "Select Installation Address",
+              options: options.map((item) => ({
+                key: item.key,
+                value: item.address,
+                name: item.name,
+              })),
+              onChange: (value) => value,
+            }}
+          />
+          <div className="w-full flex justify-end mt-5">
+            {/*Next Button */}
+            <SecondaryButton onClick={handleNext} className="w-fit h-fit !px-5">
+              Next
+            </SecondaryButton>
+          </div>
+        </Panel>
+        {/* Second Panel: Address Data */}
+        <Panel header="Address Data" key="1">
+          <InputCollapse fields={addressFields} />
+          <div className="w-full flex justify-end mt-5">
+            {/*Next Button */}
+            <SecondaryButton onClick={handleNext} className="w-fit h-fit !px-5">
+              Next
+            </SecondaryButton>
+          </div>
+        </Panel>
+      </Collapse>
       <div className="flex justify-end gap-5">
-        {/* Generate Report Button */}
+        {/* Next Button */}
         <PrimaryButton htmlType="submit" className="w-fit h-fit !px-5">
-          Generate Report
+          Next
         </PrimaryButton>
       </div>
     </Form>

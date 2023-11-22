@@ -6,10 +6,8 @@ import BasicInformationForm from "./BasicInformationForm";
 import ContactInformationForm from "./ContactInformationForm";
 
 import styles from "@/assets/Styles";
-// import ViewInstallationDetails from "@/components/ViewInstallationDetails";
 
 const { Step } = Steps;
-
 export interface BasicInformation {
   key: string;
   name: string;
@@ -112,8 +110,8 @@ const AddNewOperator: React.FC<AddNewOperatorProps> = ({
       onClose={onCloseDrawer}
     >
       <Steps current={currentStep}>
-        {steps.map((item) => (
-          <Step key={item.title} title={item.title} />
+        {steps.map((items) => (
+          <Step key={items.title} title={items.title} />
         ))}
       </Steps>
 

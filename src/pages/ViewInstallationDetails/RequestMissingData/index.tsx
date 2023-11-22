@@ -43,9 +43,15 @@ const RequestMissingData: React.FC<RequestMissingDataProps> = ({
             <p className={`${styles.label}`}>
               We will notify you once your operator has filled out the data.
             </p>
-            <PrimaryButton className="w-fit h-fit !px-5" onClick={handleClose}>
-              Okay, great
-            </PrimaryButton>
+
+            <div className="flex justify-end gap-5">
+              <PrimaryButton
+                className="w-fit h-fit !px-5"
+                onClick={handleClose}
+              >
+                Okay, great
+              </PrimaryButton>
+            </div>
           </div>
         ) : (
           <>
@@ -82,12 +88,15 @@ const RequestMissingData: React.FC<RequestMissingDataProps> = ({
               </Space.Compact>
             </div>
 
-            <PrimaryButton
-              className="w-fit h-fit !px-5"
-              onClick={() => setNextStep(true)}
-            >
-              Finish
-            </PrimaryButton>
+            <div className="flex justify-end gap-5">
+              {/*Finish Button */}
+              <PrimaryButton
+                className="w-fit h-fit !px-5"
+                onClick={() => setNextStep(true)}
+              >
+                Finish
+              </PrimaryButton>
+            </div>
           </>
         )}
       </Drawer>

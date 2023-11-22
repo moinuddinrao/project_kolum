@@ -37,10 +37,7 @@ const DownloadReportForm: React.FC<DownloadReportFormtProps> = ({
       </div>
       <p className={`${styles.text}`}>and added it to your list of reports</p>
       <div>
-        <PrimaryButton onClick={onCloseDrawer}>
-          <DownloadOutlined />
-          Okay, great!
-        </PrimaryButton>
+        <PrimaryButton onClick={onCloseDrawer}>Okay, great!</PrimaryButton>
       </div>
     </div>
   );

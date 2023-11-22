@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 
-import { ArrowLeftOutlined, QuestionCircleOutlined } from "@ant-design/icons";
 import { Button, Dropdown, Menu, Popconfirm, Table } from "antd";
 import type { TableColumnsType } from "antd";
 import {
@@ -8,6 +7,8 @@ import {
   EditTwoTone,
   DeleteTwoTone,
   PlusOutlined,
+  ArrowLeftOutlined,
+  QuestionCircleOutlined,
 } from "@ant-design/icons";
 
 import { InstallationData, InstallationColumn } from "./InstallationData";

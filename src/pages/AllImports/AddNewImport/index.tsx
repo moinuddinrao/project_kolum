@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { Drawer, Steps } from "antd";
 
 import BasicInformationForm from "./BasicInformationForm";
+import ImportDataForm from "./ImportDataForm";
 
 import styles from "@/assets/Styles";
 
@@ -28,7 +29,7 @@ const AddNewImport: React.FC<AddNewImportProps> = ({
   onCloseDrawer,
   onDataSave,
 }) => {
-  const [currentStep, setcurrentStep] = useState(0);
+  const [currentStep, setcurrentStep] = useState(1);
   const [data, setData] = useState<{
     basicInformation: BasicInformation;
   }>({} as any);
@@ -41,6 +42,15 @@ const AddNewImport: React.FC<AddNewImportProps> = ({
     setcurrentStep(currentStep + 1);
   };
 
+  const handleImportData = (values: any) => {
+    setData((prevData) => ({
+      ...prevData,
+      importData: values,
+    }));
+    onDataSave(data);
+    onCloseDrawer();
+  };
+
   console.log(data);
 
   const steps = [
@@ -50,7 +60,7 @@ const AddNewImport: React.FC<AddNewImportProps> = ({
     },
     {
       title: "Import Data",
-      content: <div>Import Data</div>,
+      content: <ImportDataForm onSuccess={handleImportData} />,
     },
     {
       title: "Customs Procedure",

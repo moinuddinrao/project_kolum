@@ -93,7 +93,7 @@ const IndirectEmissionsForm = ({
         <Panel header="Type of Determination" key="0">
           <SelectCollapse
             selectField={{
-              name: "Y/N",
+              name: "typeOfDertermination",
               placeholder: "Select",
               label: (
                 <div>

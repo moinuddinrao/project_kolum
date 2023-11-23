@@ -13,8 +13,8 @@ const { Step } = Steps;
 
 export interface BasicInformation {
   monitoringPeriod: Date;
-  ProducedNetMass: number;
-  ProducedNetMassUnit: string;
+  producedNetMass: number;
+  producedNetMassUnit: string;
 }
 
 export interface DirectEmissions {
@@ -53,8 +53,8 @@ const AddEmissionData: React.FC<EmissionDataProps> = ({
   }>({
     basicInformation: {
       monitoringPeriod: new Date(),
-      ProducedNetMass: 0,
-      ProducedNetMassUnit: "",
+      producedNetMass: 0,
+      producedNetMassUnit: "",
     },
     directEmissions: {
       typeOfDertermination: "",
@@ -72,10 +72,6 @@ const AddEmissionData: React.FC<EmissionDataProps> = ({
       emissionFactor: 0,
     },
   });
-
-  const onChange = (value: number) => {
-    console.log("onChange:", value);
-  };
 
   const handleBasicInformation = (values: BasicInformation) => {
     setData((prevData) => ({
@@ -198,25 +194,23 @@ const AddEmissionData: React.FC<EmissionDataProps> = ({
   console.log(data);
 
   return (
-    <>
-      <Drawer
-        className={`${styles.text}`}
-        title={<h2 className={`${styles.heading3}`}>Add new Installation</h2>}
-        placement="right"
-        size="large"
-        open={visible}
-        onClose={handleCloseDrawer}
-      >
-        <Steps items={items} onChange={onChange}>
-          {steps.map((items) => (
-            <Step key={items.title} title={items.title} />
-          ))}
-        </Steps>
+    <Drawer
+      className={`${styles.text}`}
+      title={<h2 className={`${styles.heading3}`}>Add new Installation</h2>}
+      placement="right"
+      size="large"
+      open={visible}
+      onClose={handleCloseDrawer}
+    >
+      <Steps items={items} current={currentStep}>
+        {steps.map((items) => (
+          <Step key={items.title} title={items.title} />
+        ))}
+      </Steps>
 
-        {/* Content */}
-        <div className="steps-content">{steps[currentStep].content}</div>
-      </Drawer>
-    </>
+      {/* Content */}
+      <div className="steps-content">{steps[currentStep].content}</div>
+    </Drawer>
   );
 };
 

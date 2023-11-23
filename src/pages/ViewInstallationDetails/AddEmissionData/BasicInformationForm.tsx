@@ -5,10 +5,10 @@ import { Collapse, DatePicker, Form } from "antd";
 import { BasicInformation } from ".";
 
 import { PrimaryButton } from "@/components/Button/PrimaryButton";
-import styles from "@/assets/Styles";
+import { SecondaryButton } from "@/components/Button/SecondaryButton";
 import InputCollapse from "@/components/Collapse/InputCollapse";
 import SelectCollapse from "@/components/Collapse/SelectCollapse";
-import { SecondaryButton } from "@/components/Button/SecondaryButton";
+import styles from "@/assets/Styles";
 
 const { Panel } = Collapse;
 
@@ -76,7 +76,7 @@ const BasicInformationForm = ({ onSuccess, cnCode }: BasicInformationProps) => {
             />
             <SelectCollapse
               selectField={{
-                name: "ProducedNetMassUnit",
+                name: "producedNetMassUnit",
                 label: "",
                 placeholder: "Select Measurement Unit",
                 options: [

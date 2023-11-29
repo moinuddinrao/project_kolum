@@ -19,7 +19,7 @@ export interface ImportTableData {
   importDate: string;
 }
 
-const ImportsTable = () => {
+export const ImportsTable = () => {
   const [form] = Form.useForm();
   const [data, setData] = useState(originData);
 
@@ -122,5 +122,3 @@ const ImportsTable = () => {
     </Form>
   );
 };
-
-export default ImportsTable;

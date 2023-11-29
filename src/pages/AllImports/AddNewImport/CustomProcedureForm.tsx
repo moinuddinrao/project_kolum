@@ -11,35 +11,18 @@ const { Panel } = Collapse;
 
 interface CustomProcedureFormProps {
   onSuccess: (data: CustomProcedure) => void;
+  onBack: () => void;
 }
 
-const CustomProcedureForm = ({ onSuccess }: CustomProcedureFormProps) => {
+export const CustomProcedureForm = ({
+  onSuccess,
+  onBack,
+}: CustomProcedureFormProps) => {
   const [form] = Form.useForm();
 
-  const [activeKey, setActiveKey] = useState("1");
   const [areaOfImport, setAreaOfImport] = useState("");
   const [appliedCustomsProcedure, setAppliedCustomsProcedure] = useState("");
   const [inwardProcessing, setInwardProcessing] = useState("");
-
-  // Handle Back
-  const handleBack = async (field: string[], newKey: string) => {
-    try {
-      await form.resetFields(field);
-      setActiveKey(newKey);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  // Handle Next
-  const handleNext = async (field: string[], newKey: string) => {
-    try {
-      await form.validateFields(field);
-      setActiveKey(newKey);
-    } catch (error) {
-      console.log(error);
-    }
-  };
 
   // Handle the change in the selected value for different panels
   const handleSelectChange = (
@@ -50,24 +33,39 @@ const CustomProcedureForm = ({ onSuccess }: CustomProcedureFormProps) => {
   };
 
   // Handle form submission
-  const handleSubmit = (values: CustomProcedure) => {
-    const newValues = {
-      ...values,
-      areaOfImport,
-      appliedCustomsProcedure,
-      inwardProcessing,
-    };
-    console.log(newValues);
-    onSuccess(newValues);
+  const handleSubmit = async (values: CustomProcedure) => {
+    try {
+      // Validate the form
+      await form.validateFields();
+
+      // Save the data
+      values.areaOfImport = areaOfImport;
+      values.appliedCustomsProcedure = appliedCustomsProcedure;
+      values.inwardProcessing = inwardProcessing;
+
+      // View the data
+      console.log(values);
+
+      // Call On Success
+      onSuccess(values);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  // Handle failed form submission
+  const handleFailedSubmit = (errorInfo: any) => {
+    console.log("Failed:", errorInfo);
   };
 
   return (
     <Form
       form={form}
       onFinish={handleSubmit}
+      onFinishFailed={handleFailedSubmit}
       className="w-full flex flex-col justify-between gap-10"
     >
-      <Collapse activeKey={activeKey}>
+      <Collapse accordion>
         {/* Area of Import */}
         <Panel header="Area of import" key="1">
           <div className="w-full flex flex-col gap-5">
@@ -96,15 +94,6 @@ const CustomProcedureForm = ({ onSuccess }: CustomProcedureFormProps) => {
                 </Select.Option>
               </Select>
             </Form.Item>
-
-            <div className="w-full flex justify-end gap-2">
-              <PrimaryButton
-                onClick={() => handleNext(["areaOfImport"], "2")}
-                className="w-fit h-fit !px-5"
-              >
-                Next
-              </PrimaryButton>
-            </div>
           </div>
         </Panel>
         {/* Applied customs procedure */}
@@ -151,21 +140,6 @@ const CustomProcedureForm = ({ onSuccess }: CustomProcedureFormProps) => {
                 </Select.Option>
               </Select>
             </Form.Item>
-
-            <div className="w-full flex justify-end gap-2">
-              <SecondaryButton
-                onClick={() => handleBack(["appliedCustomsProcedure"], "1")}
-                className="w-fit h-fit !px-5"
-              >
-                Back
-              </SecondaryButton>
-              <PrimaryButton
-                onClick={() => handleNext(["appliedCustomsProcedure"], "3")}
-                className="w-fit h-fit !px-5"
-              >
-                Next
-              </PrimaryButton>
-            </div>
           </div>
         </Panel>
         {/* Inward processing */}
@@ -186,22 +160,16 @@ const CustomProcedureForm = ({ onSuccess }: CustomProcedureFormProps) => {
                 support for handling inward processing in early 2024.
               </p>
 
-              <div className="w-full flex justify-end gap-2">
+              <div className="flex justify-end gap-2">
                 <SecondaryButton
                   onClick={() => {
                     setInwardProcessing("");
-                    handleBack(["inwardProcessing"], "3");
+                    form.resetFields(["inwardProcessing"]);
                   }}
                   className="w-fit h-fit !px-5"
                 >
                   Back
                 </SecondaryButton>
-                <PrimaryButton
-                  onClick={() => handleNext(["inwardProcessing"], "4")}
-                  className="w-fit h-fit !px-5"
-                >
-                  Next
-                </PrimaryButton>
               </div>
             </div>
           ) : (
@@ -232,63 +200,20 @@ const CustomProcedureForm = ({ onSuccess }: CustomProcedureFormProps) => {
                   <Select.Option value="No">No</Select.Option>
                 </Select>
               </Form.Item>
-
-              <div className="w-full flex justify-end gap-2">
-                <SecondaryButton
-                  onClick={() => handleBack(["inwardProcessing"], "2")}
-                  className="w-fit h-fit !px-5"
-                >
-                  Back
-                </SecondaryButton>
-                <PrimaryButton
-                  onClick={() => handleNext(["inwardProcessing"], "4")}
-                  className="w-fit h-fit !px-5"
-                >
-                  Next
-                </PrimaryButton>
-              </div>
             </div>
           )}
         </Panel>
       </Collapse>
 
       {/* Action Buttons */}
-      {activeKey === "4" ? (
-        <div className="flex justify-end gap-5">
-          <SecondaryButton
-            onClick={() => {
-              form.resetFields();
-              setActiveKey("1");
-            }}
-            className="w-fit h-fit !px-5"
-          >
-            Reset
-          </SecondaryButton>
-          <PrimaryButton htmlType="submit" className="w-fit h-fit !px-5">
-            Next
-          </PrimaryButton>
-        </div>
-      ) : (
-        <div className="flex justify-end gap-5">
-          <SecondaryButton
-            onClick={() => setActiveKey("1")}
-            className={`w-fit h-fit !px-5 ${activeKey !== "1" ? "" : "hidden"}`}
-          >
-            Restart
-          </SecondaryButton>
-          <PrimaryButton
-            htmlType="submit"
-            className={`w-fit h-fit !px-5 ${
-              activeKey !== "4" &&
-              "opacity-50 pointer-events-none cursor-not-allowed"
-            }`}
-          >
-            Next
-          </PrimaryButton>
-        </div>
-      )}
+      <div className="flex justify-end gap-5">
+        <SecondaryButton onClick={onBack} className="w-fit h-fit !px-5">
+          Back
+        </SecondaryButton>
+        <PrimaryButton htmlType="submit" className="w-fit h-fit !px-5">
+          Next
+        </PrimaryButton>
+      </div>
     </Form>
   );
 };
-
-export default CustomProcedureForm;

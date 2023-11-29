@@ -11,7 +11,7 @@ import Layout from "@/components/Layout";
 import CompanySetup from "@/pages/CompanySetup";
 import Dashboard from "@/pages/Dashboard";
 import AllOperators from "@/pages/AllOperators";
-import AllImports from "@/pages/AllImports";
+import { AllImports } from "@/pages/AllImports";
 import AllReports from "@/pages/AllReports";
 import Settings from "@/pages/Settings";
 

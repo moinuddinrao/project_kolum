@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 
-import { Checkbox, Collapse, Form, Input, Select } from "antd";
+import { Checkbox, Collapse, Form, Input, InputNumber, Select } from "antd";
 
 import { BasicInformation } from ".";
 
 import { PrimaryButton } from "@/components/Button/PrimaryButton";
-import { SecondaryButton } from "@/components/Button/SecondaryButton";
 import styles from "@/assets/Styles";
+import { SecondaryButton } from "@/components/Button/SecondaryButton";
 
 const { Panel } = Collapse;
 
@@ -15,45 +15,39 @@ interface BasicInformationProps {
 }
 
 const goodsCategories = {
-  Cement: ["2523 2 - White-cement", "2523 2 - Grey-cement"],
+  Cement: ["2523 2 - White cement", "2523 2 - Grey cement"],
   Electricity: ["2716 0 - Electricity"],
   Fertilizers: [
     "3105 1 - Urea",
-    "3105 2 - Ammonium-nitrate",
-    "3105 3 - Ammonium-sulphate",
-    "3105 4 - Ammonium-chloride",
+    "3105 2 - Ammonium nitrate",
+    "3105 3 - Ammonium sulphate",
+    "3105 4 - Ammonium chloride",
   ],
   "Iron and Steel": [
-    "7202 1 - Ferro-manganese",
-    "7202 4 - Ferro-chromium",
-    "7202 6 - Ferro-nickel",
+    "7202 1 - Ferro manganese",
+    "7202 4 - Ferro chromium",
+    "7202 6 - Ferro nickel",
   ],
-  Aluminium: ["7601 1 - Unwrought -luminium", "7601 2 - Aluminium-alloys"],
+  Aluminium: ["7601 1 - Unwrought aluminium", "7601 2 - Aluminium alloys"],
   Chemicals: [
     "2804 1 - Hydrogen",
-    "2804 2 - Rare-gases",
+    "2804 2 - Sodium",
     "2804 3 - Nitrogen",
     "2804 4 - Oxygen",
     "2804 5 - Boron",
   ],
 };
 
-const BasicInformationForm = ({ onSuccess }: BasicInformationProps) => {
+export const BasicInformationForm = ({ onSuccess }: BasicInformationProps) => {
   const [form] = Form.useForm();
 
-  const [activeKey, setActiveKey] = useState("1");
   const [selectedCategory, setSelectedCategory] = useState("");
+  const [goodsCategory, setGoodsCategory] = useState("");
   const [digits, setDigits] = useState(["", "", ""]);
   const [description, setDescription] = useState("");
-  const [cnCode, setCnCode] = useState("");
   const [countryOfOrigin, setCountryOfOrigin] = useState("");
   const [monetaryValue, setMonetaryValue] = useState("");
   const [militaryActivities, setMilitaryActivities] = useState("");
-
-  // Handle the change in the goods category
-  const handleCategoryChange = (category: string) => {
-    setSelectedCategory(category);
-  };
 
   // Handle the change in the selected value for different panels
   const handleSelectChange = (
@@ -64,30 +58,50 @@ const BasicInformationForm = ({ onSuccess }: BasicInformationProps) => {
   };
 
   // Handle form submission
-  const handleSubmit = (values: BasicInformation) => {
-    const newValues = {
-      ...values,
-      cnCode,
-      description,
-      countryOfOrigin,
-      monetaryValue,
-      militaryActivities,
-    };
-    console.log(newValues);
-    onSuccess(newValues);
+  const handleSubmit = async (values: BasicInformation) => {
+    try {
+      // Validate the form
+      await form.validateFields();
+
+      // Set the values of the form
+      values.goodsCategory = goodsCategory;
+      values.cnCode = selectedCategory
+        ? `${selectedCategory.split(" - ")[0]}${digits[0]} ${digits[1]}${
+            digits[2]
+          } - ${selectedCategory.split(" - ")[1]}`
+        : "";
+      values.description = description;
+      values.countryOfOrigin = countryOfOrigin;
+      values.monetaryValue = monetaryValue;
+      values.militaryActivities = militaryActivities;
+
+      // View the values in the console
+      console.log(values);
+
+      // Call the onSuccess function
+      onSuccess(values);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  // Handle failed form submission
+  const handleFailedSubmit = (errorInfo: any) => {
+    console.log(errorInfo);
   };
 
   return (
     <Form
       form={form}
       onFinish={handleSubmit}
+      onFinishFailed={handleFailedSubmit}
       className="w-full flex flex-col justify-between gap-10"
     >
-      <Collapse activeKey={activeKey}>
+      <Collapse accordion>
         {/* Goods Category */}
         <Panel header="Goods Category" key="1">
           {selectedCategory.length > 0 ? (
-            <div className="w-full flex flex-col gap-10">
+            <div className="w-full flex flex-col gap-5">
               {/* CN Code */}
               <div className="w-full flex flex-col gap-2">
                 <h3 className={styles.heading3}>CN Code</h3>
@@ -95,7 +109,7 @@ const BasicInformationForm = ({ onSuccess }: BasicInformationProps) => {
                   Please complete the goods code below so that it is a fully
                   valid, 8-digit CN code.
                 </p>
-                {/* Show Input to complete the goodsCategory */}
+                {/* Show Input to complete the selectedCategory */}
                 <div className={`w-full flex gap-2 ${styles.heading3}`}>
                   <p className="!m-0">{selectedCategory.split(" - ")[0]}</p>
                   <div className="flex gap-2">
@@ -110,22 +124,34 @@ const BasicInformationForm = ({ onSuccess }: BasicInformationProps) => {
                             required: true,
                             message: "required",
                           },
-                          {
-                            pattern: /^[0-9]$/,
-                            len: 1,
-                            message: "invalid",
-                          },
+                          ({ getFieldValue }) => ({
+                            validator(_, value) {
+                              const digit = value?.toString();
+                              if (
+                                !digit ||
+                                (digit.length === 1 && /^\d$/.test(digit))
+                              ) {
+                                return Promise.resolve();
+                              }
+                              return Promise.reject(
+                                "Please enter a single digit",
+                              );
+                            },
+                          }),
                         ]}
                       >
-                        <Input
-                          onChange={(e) => {
-                            setDigits((prevDigits) => {
-                              const newDigits = [...prevDigits];
-                              newDigits[index] = e.target.value;
-                              return newDigits;
-                            });
+                        <InputNumber
+                          type="number"
+                          maxLength={1}
+                          placeholder="0"
+                          className={`!max-w-fit !font-bold rounded-md`}
+                          min={0}
+                          max={9}
+                          onChange={(value) => {
+                            const newDigits = [...digits];
+                            newDigits[index] = value?.toString() || "";
+                            setDigits(newDigits);
                           }}
-                          className={`w-7 max-w-fit ${styles.text} rounded-md !px-2`}
                         />
                       </Form.Item>
                     ))}
@@ -147,6 +173,10 @@ const BasicInformationForm = ({ onSuccess }: BasicInformationProps) => {
                       required: true,
                       message: "Description is required",
                     },
+                    {
+                      max: 100,
+                      message: "Description must be less than 100 characters",
+                    },
                   ]}
                 >
                   <Input.TextArea
@@ -156,33 +186,24 @@ const BasicInformationForm = ({ onSuccess }: BasicInformationProps) => {
                   />
                 </Form.Item>
               </div>
-              <div className="w-full flex justify-end gap-2">
+              <div className="flex justify-end gap-2">
                 <SecondaryButton
-                  onClick={() => setSelectedCategory("")}
                   className="w-fit h-fit !px-5"
+                  onClick={() => {
+                    setSelectedCategory("");
+                    setGoodsCategory("");
+                    setDigits(["", "", ""]);
+                    setDescription("");
+                  }}
                 >
                   Back
                 </SecondaryButton>
-                <PrimaryButton
-                  onClick={() => {
-                    // Simplify the code to set CnCode
-                    setCnCode(
-                      `${selectedCategory.split(" - ")[0]}${digits[0]}${
-                        digits[1]
-                      }${digits[2]}`,
-                    );
-                    setActiveKey("2");
-                  }}
-                  className="w-fit h-fit !px-5"
-                >
-                  Next
-                </PrimaryButton>
               </div>
             </div>
           ) : (
-            <>
-              <p>Select your import&apos;s goods category</p>
-              <Collapse defaultActiveKey="1">
+            <div className="w-full flex flex-col justify-between gap-5">
+              <p className="!m-0">Select your import&apos;s goods category</p>
+              <Collapse accordion defaultActiveKey="1">
                 {/* Map through goodsCategories for dynamic rendering */}
                 {Object.entries(goodsCategories).map(([category, options]) => (
                   <Panel header={category} key={category}>
@@ -195,7 +216,10 @@ const BasicInformationForm = ({ onSuccess }: BasicInformationProps) => {
                         {options.map((option) => (
                           <Checkbox
                             key={option}
-                            onChange={() => handleCategoryChange(option)}
+                            onChange={() => {
+                              setGoodsCategory(category);
+                              setSelectedCategory(option);
+                            }}
                           >
                             {option}
                           </Checkbox>
@@ -205,19 +229,23 @@ const BasicInformationForm = ({ onSuccess }: BasicInformationProps) => {
                   </Panel>
                 ))}
               </Collapse>
-            </>
+            </div>
           )}
         </Panel>
         {/* Country of Origin */}
         <Panel header="Country of Origin" key="2">
-          <div className="w-full flex flex-col gap-10">
-            <p>Is the import&apos;s country of origin either:</p>
-            <ul>
+          <div className="w-full flex flex-col gap-5">
+            <p className="!m-0">
+              Is the import&apos;s country of origin either:
+            </p>
+
+            <ul className="!m-0">
               <li>Liechtenstein</li>
               <li>Norway</li>
               <li>Iceland</li>
               <li>Switzerland?</li>
             </ul>
+
             <Form.Item
               name="countryOfOrigin"
               className="!m-0"
@@ -239,137 +267,77 @@ const BasicInformationForm = ({ onSuccess }: BasicInformationProps) => {
                 <Select.Option value="No">No</Select.Option>
               </Select>
             </Form.Item>
-            <div className="w-full flex justify-end gap-2">
-              <SecondaryButton
-                onClick={() => setActiveKey("1")}
-                className="w-fit h-fit !px-5"
-              >
-                Back
-              </SecondaryButton>
-              <PrimaryButton
-                onClick={() => setActiveKey("3")}
-                className="w-fit h-fit !px-5"
-              >
-                Next
-              </PrimaryButton>
-            </div>
           </div>
         </Panel>
         {/* Monetary Value */}
         <Panel header="Monetary Value" key="3">
-          <div className="w-full flex flex-col gap-10">
-            <p>
+          <div className="w-full flex flex-col gap-5">
+            <p className="!m-0">
               Is the monetary value of the import 150€ (per shipment) or less?
             </p>
-            <Select
-              placeholder="Select Answer"
-              className="w-full"
-              onChange={(value) => handleSelectChange(value, setMonetaryValue)}
+
+            <Form.Item
+              name="monetaryValue"
+              className="!m-0"
+              rules={[
+                {
+                  required: true,
+                  message: "Please select an answer",
+                },
+              ]}
             >
-              <Select.Option value="Yes">Yes</Select.Option>
-              <Select.Option value="No">No</Select.Option>
-            </Select>
-            <div className="w-full flex justify-end gap-2">
-              <SecondaryButton
-                onClick={() => setActiveKey("2")}
-                className="w-fit h-fit !px-5"
+              <Select
+                placeholder="Select Answer"
+                className="w-full"
+                onChange={(value) =>
+                  handleSelectChange(value, setMonetaryValue)
+                }
               >
-                Back
-              </SecondaryButton>
-              <PrimaryButton
-                onClick={() => setActiveKey("4")}
-                className="w-fit h-fit !px-5"
-              >
-                Next
-              </PrimaryButton>
-            </div>
+                <Select.Option value="Yes">Yes</Select.Option>
+                <Select.Option value="No">No</Select.Option>
+              </Select>
+            </Form.Item>
           </div>
         </Panel>
         {/* Military Activities */}
         <Panel header="Military Activities" key="4">
-          <div className="w-full flex flex-col gap-10">
-            <p>
+          <div className="w-full flex flex-col gap-5">
+            <p className="!m-0">
               Are the imported goods transported or used in the context of
               military activities?
             </p>
-            <Select
-              placeholder="Select Answer"
-              className="w-full"
-              onChange={(value) =>
-                handleSelectChange(value, setMilitaryActivities)
-              }
+
+            <Form.Item
+              name="militaryActivities"
+              className="!m-0"
+              rules={[
+                {
+                  required: true,
+                  message: "Please select an answer",
+                },
+              ]}
             >
-              <Select.Option value="Yes">Yes</Select.Option>
-              <Select.Option value="No">No</Select.Option>
-            </Select>
-            <div className="w-full flex justify-end gap-2">
-              <SecondaryButton
-                onClick={() => setActiveKey("3")}
-                className="w-fit h-fit !px-5"
+              <Select
+                placeholder="Select Answer"
+                className="w-full"
+                onChange={(value) =>
+                  handleSelectChange(value, setMilitaryActivities)
+                }
               >
-                Back
-              </SecondaryButton>
-              <PrimaryButton
-                onClick={() => setActiveKey("5")}
-                className="w-fit h-fit !px-5"
-              >
-                Next
-              </PrimaryButton>
-            </div>
+                <Select.Option value="Yes">Yes</Select.Option>
+                <Select.Option value="No">No</Select.Option>
+              </Select>
+            </Form.Item>
           </div>
         </Panel>
       </Collapse>
-      {/* Next Button */}
-      {selectedCategory.length > 0 &&
-      digits &&
-      description &&
-      cnCode &&
-      countryOfOrigin &&
-      monetaryValue &&
-      militaryActivities &&
-      activeKey === "5" ? (
-        <div className="flex justify-end gap-5">
-          <SecondaryButton
-            onClick={() => {
-              form.resetFields();
-              setSelectedCategory("");
-              setDigits(["", "", ""]);
-              setDescription("");
-              setCnCode("");
-              setCountryOfOrigin("");
-              setMonetaryValue("");
-              setMilitaryActivities("");
-              setActiveKey("1");
-            }}
-            className="w-fit h-fit !px-5"
-          >
-            Reset
-          </SecondaryButton>
-          <PrimaryButton htmlType="submit" className="w-fit h-fit !px-5">
-            Next
-          </PrimaryButton>
-        </div>
-      ) : (
-        <div className="flex justify-end gap-5">
-          <SecondaryButton
-            onClick={() => setActiveKey("1")}
-            className={`w-fit h-fit !px-5 ${activeKey !== "1" ? "" : "hidden"}`}
-          >
-            Restart
-          </SecondaryButton>
-          <PrimaryButton
-            htmlType="submit"
-            className={`w-fit h-fit !px-5 ${
-              activeKey !== "5" &&
-              "opacity-50 pointer-events-none cursor-not-allowed"
-            }`}
-          >
-            Next
-          </PrimaryButton>
-        </div>
-      )}
+
+      {/* Action Buttons */}
+      <div className="flex justify-end gap-5">
+        <PrimaryButton htmlType="submit" className="w-fit h-fit !px-5">
+          Next
+        </PrimaryButton>
+      </div>
     </Form>
   );
 };
-
-export default BasicInformationForm;

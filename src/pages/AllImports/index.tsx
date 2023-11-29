@@ -2,13 +2,14 @@ import React, { useState } from "react";
 
 import { PlusOutlined } from "@ant-design/icons";
 
-import ImportsTable from "./ImportsTable";
+import { ImportsTable } from "./ImportsTable";
 
-import AddNewImport from "@/pages/AllImports/AddNewImport"; // Import the types here
+import { AddNewImport } from "@/pages/AllImports/AddNewImport";
+import { NewImportData } from "@/pages/AllImports/AddNewImport";
 import { PrimaryButton } from "@/components/Button/PrimaryButton";
 import styles from "@/assets/Styles";
 
-const AllImports = () => {
+export const AllImports = () => {
   const [isDrawerVisible, setIsDrawerVisible] = useState(false);
 
   const showDrawer = () => {
@@ -19,7 +20,8 @@ const AllImports = () => {
     setIsDrawerVisible(false);
   };
 
-  const handleDataSave = () => {
+  const handleDataSave = (data: NewImportData) => {
+    // TODO: Save data to database
     onCloseDrawer();
   };
 
@@ -40,5 +42,3 @@ const AllImports = () => {
     </section>
   );
 };
-
-export default AllImports;

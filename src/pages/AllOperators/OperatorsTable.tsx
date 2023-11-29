@@ -6,7 +6,6 @@ import { MoreOutlined, EditTwoTone, DeleteTwoTone } from "@ant-design/icons";
 
 import { originData } from "./AllOperatorsData";
 
-import EditOperator from "@/pages/AllOperators/EditOperator";
 import styles from "@/assets/Styles";
 
 export interface Item {
@@ -34,8 +33,8 @@ export interface Item {
 const OperatorsTable = () => {
   const [form] = Form.useForm();
   const [data, setData] = useState(originData);
-  const [selectedRow, setSelectedRow] = useState<Item | null>(null); // New state to store the selected record
-  const [isDrawerVisible, setIsDrawerVisible] = useState(false);
+  // const [selectedRow, setSelectedRow] = useState<Item | null>(null); // New state to store the selected record
+  // const [isDrawerVisible, setIsDrawerVisible] = useState(false);
 
   const deleteRecord = (record: Item) => {
     const newData = data.filter((items) => items.key !== record.key);
@@ -43,15 +42,15 @@ const OperatorsTable = () => {
     console.log("Delete clicked");
   };
 
-  const showDrawer = (record: Item) => {
-    setSelectedRow(record);
-    setIsDrawerVisible(true);
-  };
+  // const showDrawer = (record: Item) => {
+  //   setSelectedRow(record);
+  //   setIsDrawerVisible(true);
+  // };
 
-  const onCloseDrawer = () => {
-    setSelectedRow(null);
-    setIsDrawerVisible(false);
-  };
+  // const onCloseDrawer = () => {
+  //   setSelectedRow(null);
+  //   setIsDrawerVisible(false);
+  // };
 
   const getMenu = (record: Item) => {
     return (
@@ -60,7 +59,7 @@ const OperatorsTable = () => {
           className={`${styles.text}`}
           key="edit"
           icon={<EditTwoTone />}
-          onClick={() => showDrawer(record)}
+          // onClick={() => showDrawer(record)}
         >
           Edit
         </Menu.Item>
@@ -176,13 +175,6 @@ const OperatorsTable = () => {
 
   return (
     <>
-      {isDrawerVisible && (
-        <EditOperator
-          visible={isDrawerVisible}
-          onCloseDrawer={onCloseDrawer}
-          selectedRow={selectedRow}
-        />
-      )}
       <Form form={form} component={false}>
         <Table
           // className={`${styles.label} p-3 overflow-auto`}

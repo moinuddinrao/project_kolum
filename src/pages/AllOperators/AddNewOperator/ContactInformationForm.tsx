@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 
 import { Form, Collapse } from "antd";
 
@@ -13,6 +13,7 @@ const { Panel } = Collapse;
 
 interface ContactDataProps {
   onSuccess: (values: ContactData) => void;
+  onBack: () => void;
 }
 
 type Field = {
@@ -37,24 +38,31 @@ const contactFields: Field[] = [
   { name: "phone_number", placeholder: "Phone", value: "" },
 ];
 
-const ContactInformationForm = ({ onSuccess }: ContactDataProps) => {
-  const [activeKey, setActiveKey] = useState(0);
+const ContactInformationForm = ({ onSuccess, onBack }: ContactDataProps) => {
+  const [form] = Form.useForm();
 
-  const handleNext = async () => {
+  // Handle Submit form  submission
+  const handleSubmit = async (values: ContactData) => {
     try {
       await form.validateFields();
-      setActiveKey(activeKey + 1);
+
+      // Call the onSuccess function
+      onSuccess(values);
     } catch (error) {
       console.log(error);
     }
   };
 
-  const [form] = Form.useForm();
+  // Handle failed form submission
+  const handleFailedSubmit = (errorInfo: any) => {
+    console.log("Failed:", errorInfo);
+  };
 
   return (
     <Form
       form={form}
-      onFinish={onSuccess}
+      onFinish={handleSubmit}
+      onFinishFailed={handleFailedSubmit}
       className="w-full flex flex-col justify-between gap-10"
     >
       <h5 className={`${styles.heading3}`}>Contact Information</h5>
@@ -63,21 +71,18 @@ const ContactInformationForm = ({ onSuccess }: ContactDataProps) => {
         Fill in contact information for the person associated with the operator.
       </p>
 
-      <Collapse activeKey={activeKey}>
+      <Collapse accordion>
         {/* First Panel: Contact Information */}
         <Panel header="Contact Information" key="0">
           <InputCollapse fields={contactFields} />
-          <div className="w-full flex justify-end mt-5">
-            {/*Next Button */}
-            <SecondaryButton onClick={handleNext} className="w-fit h-fit !px-5">
-              Next
-            </SecondaryButton>
-          </div>
         </Panel>
       </Collapse>
 
+      {/* Next Button */}
       <div className="flex justify-end gap-5">
-        {/* Next Button */}
+        <SecondaryButton onClick={onBack} className="w-fit h-fit !px-5">
+          Back
+        </SecondaryButton>
         <PrimaryButton htmlType="submit" className="w-fit h-fit !px-5">
           Next
         </PrimaryButton>

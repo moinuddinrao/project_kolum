@@ -4,11 +4,11 @@ import { PlusOutlined } from "@ant-design/icons";
 
 import OperatorsTable from "./OperatorsTable";
 
+import ViewInstallationDetails from "@/pages/ViewInstallationDetails";
 import AddNewOperator, {
   BasicInformation,
   ContactData,
-} from "@/pages/AllOperators/AddNewOperator"; // Import the types here
-import ViewOperatorDetails from "@/pages/ViewOperatorDetails";
+} from "@/pages/AllOperators/AddNewOperator";
 import { PrimaryButton } from "@/components/Button/PrimaryButton";
 import styles from "@/assets/Styles";
 
@@ -37,7 +37,7 @@ const AllOperators = () => {
   return (
     <section className={`${styles.section}`}>
       {savedData ? (
-        <ViewOperatorDetails
+        <ViewInstallationDetails
           basicInformation={savedData.basicInformation}
           contactData={savedData.contactData}
         />

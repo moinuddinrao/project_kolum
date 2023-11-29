@@ -68,6 +68,10 @@ const AddNewOperator: React.FC<AddNewOperatorProps> = ({
     },
   });
 
+  const onBack = () => {
+    setcurrentStep(currentStep - 1);
+  };
+
   const handleBasicInformation = (values: BasicInformation) => {
     setData((prevData) => ({
       ...prevData,
@@ -96,7 +100,9 @@ const AddNewOperator: React.FC<AddNewOperatorProps> = ({
     },
     {
       title: "Contact Data",
-      content: <ContactInformationForm onSuccess={handleContactData} />,
+      content: (
+        <ContactInformationForm onSuccess={handleContactData} onBack={onBack} />
+      ),
     },
   ];
 

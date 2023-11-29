@@ -1,13 +1,12 @@
-import React, { useState } from "react";
+import React from "react";
 
 import { Form, Collapse } from "antd";
 
 import { BasicInformation } from ".";
 
+import InputCollapse from "@/components/Collapse/InputCollapse";
 import { PrimaryButton } from "@/components/Button/PrimaryButton";
 import styles from "@/assets/Styles";
-import InputCollapse from "@/components/Collapse/InputCollapse";
-import { SecondaryButton } from "@/components/Button/SecondaryButton";
 
 const { Panel } = Collapse;
 
@@ -54,23 +53,30 @@ const addressFields: Field[] = [
 ];
 
 const BasicInformationForm = ({ onSuccess }: BasicInformationProps) => {
-  const [activeKey, setActiveKey] = useState(0);
+  const [form] = Form.useForm();
 
-  const handleNext = async () => {
+  // Handle Submit form  submission
+  const handleSubmit = async (values: BasicInformation) => {
     try {
       await form.validateFields();
-      setActiveKey(activeKey + 1);
+
+      // Call the onSuccess function
+      onSuccess(values);
     } catch (error) {
       console.log(error);
     }
   };
 
-  const [form] = Form.useForm();
+  // Handle failed form submission
+  const handleFailedSubmit = (errorInfo: any) => {
+    console.log(errorInfo);
+  };
 
   return (
     <Form
       form={form}
-      onFinish={onSuccess}
+      onFinish={handleSubmit}
+      onFinishFailed={handleFailedSubmit}
       className="w-full flex flex-col justify-between gap-10"
     >
       <h5 className={`${styles.heading3}`}>Basic Information</h5>
@@ -80,27 +86,15 @@ const BasicInformationForm = ({ onSuccess }: BasicInformationProps) => {
         Operator.
       </p>
 
-      <Collapse activeKey={activeKey}>
+      <Collapse accordion>
         {/* First Panel: Basic Information */}
         <Panel header="Basic Information" key="0">
           <InputCollapse fields={BasicField} />
-          <div className="w-full flex justify-end mt-5">
-            {/*Next Button */}
-            <SecondaryButton onClick={handleNext} className="w-fit h-fit !px-5">
-              Next
-            </SecondaryButton>
-          </div>
         </Panel>
 
         {/* Second Panel: Address Data */}
         <Panel header="Address Data" key="1">
           <InputCollapse fields={addressFields} />
-          <div className="w-full flex justify-end mt-5">
-            {/*Next Button */}
-            <SecondaryButton onClick={handleNext} className="w-fit h-fit !px-5">
-              Next
-            </SecondaryButton>
-          </div>
         </Panel>
       </Collapse>
 

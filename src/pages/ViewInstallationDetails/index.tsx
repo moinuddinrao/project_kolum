@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-import { Button, Dropdown, Menu, Popconfirm, Table } from "antd";
+import { Button, Dropdown, Menu, Popconfirm, Table, Form } from "antd";
 import type { TableColumnsType } from "antd";
 import {
   MoreOutlined,
@@ -12,12 +12,16 @@ import {
 } from "@ant-design/icons";
 
 import { InstallationData, InstallationColumn } from "./InstallationData";
+import AddCarbonPricePaidData from "./AddCarbonPriceData";
 import AddNewInstallation from "./AddNewInstallation";
 import RequestMissingData from "./RequestMissingData";
 import AddEmissionData from "./AddEmissionData";
+import AddProcessData from "./AddProcessData";
 
+import ViewOperatorDetails from "@/pages/ViewOperatorDetails";
 import { SecondaryButton } from "@/components/Button/SecondaryButton";
 import { PrimaryButton } from "@/components/Button/PrimaryButton";
+import CustomForm from "@/components/Form/CustomForm";
 import styles from "@/assets/Styles";
 import {
   BasicInformation,
@@ -29,40 +33,75 @@ interface InstallationInformationsProps {
   contactData: ContactData;
 }
 
+interface Record {
+  key: string;
+  name: string;
+  installationID: string;
+  economicActivity: string;
+  "UN/LOCODE Number": string;
+  imported_good: string[];
+  productionProcess: string[];
+  emissionData: string[];
+  carbonPricePaidData: string[];
+}
+
+interface OperatorInformations {
+  name: string;
+  economicActivity: string;
+  "UN/LOCODE Number": string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone_number: string;
+  street: string | number;
+  streetNumber: string | number;
+  city: string | number;
+  postcode: string | number;
+  country: string | number;
+  poBox: string | number;
+}
+
 const ViewInstallationDetails: React.FC<InstallationInformationsProps> = ({
   basicInformation,
   contactData,
 }) => {
+  const [form] = Form.useForm();
+
   const [data, setData] = useState(InstallationData);
   const [openEmissionDataDrawer, setOpenEmissionDataDrawer] = useState(false);
-  const [emissionData, setEmissionData] = useState<any>(null);
+  const [openProductionProcessDrawer, setOpenProductionProcessDrawer] =
+    useState(false);
+  const [openCarbonPriceDrawer, setOpenCarbonPriceDrawer] = useState(false);
+  const [cnCode, setCnCode] = useState<any>(null);
   const [openRequestDrawer, setOpenRequestDrawer] = useState(false);
   const [openInstallationDrawer, setOpenInstallationDrawer] = useState(false);
+  const [initialData, setInitialData] = useState<OperatorInformations>({
+    name: basicInformation.name ?? "",
+    street: basicInformation.streetName ?? "",
+    streetNumber: basicInformation.streetNumber ?? "",
+    city: basicInformation.city ?? "",
+    postcode: 342442,
+    country: basicInformation.country ?? "",
+    poBox: basicInformation.poBox ?? "",
+    firstName: contactData.firstName ?? "",
+    lastName: contactData.lastName ?? "",
+    email: contactData.email ?? "",
+    phone_number: contactData.phone_number ?? "",
+    economicActivity: "",
+    "UN/LOCODE Number": "",
+  });
 
-  const infofields = [
-    { name: "legalName", label: "Legal Name*", value: basicInformation.name },
-    {
-      name: "UN/LOCODE_Number",
-      label: "UN/LOCODE Number",
-      value: "DEBER",
-    },
-    {
-      name: "economicActivity",
-      label: "Economic Activity",
-      value: "Economic",
-    },
-  ];
-
-  const contactFields = [
-    { name: "firstName", label: "First Name", value: contactData.firstName },
-    { name: "lastName", label: "Last Name", value: contactData.lastName },
-    { name: "email", label: "Email", value: contactData.email },
-    {
-      name: "phoneNumber",
-      label: "Phone Number",
-      value: contactData.phone_number,
-    },
-  ];
+  const [selectedRow, setSelectedRow] = useState<{
+    key: string;
+    name: string;
+    installationID: string;
+    economicActivity: string;
+    "UN/LOCODE Number": string;
+    imported_good: string[];
+    productionProcess: string[];
+    emissionData: string[];
+    carbonPricePaidData: string[];
+  } | null>(null);
 
   const addressFields = [
     { name: "street", label: "Street", value: basicInformation.streetName },
@@ -72,14 +111,29 @@ const ViewInstallationDetails: React.FC<InstallationInformationsProps> = ({
       value: basicInformation.streetNumber,
     },
     { name: "city", label: "City", value: basicInformation.city },
-    { name: "postcode", label: "Postcode", value: basicInformation.poBox },
     {
       name: "country",
       label: "Country",
       value: basicInformation.country,
     },
     { name: "poBox", label: "PO Box", value: basicInformation.poBox },
+    { name: "postcode", label: "Postcode", value: 342442 },
   ];
+
+  const handleonClick = (record: Record) => {
+    setSelectedRow(() => ({ ...record, addressField: addressFields }));
+  };
+
+  // Handle form submission
+  const handleSubmit = async () => {
+    try {
+      const values = await form.validateFields();
+      setInitialData({ ...initialData, ...values });
+      console.log("Success:", values);
+    } catch (errorInfo) {
+      console.log("Validation Failed:", errorInfo);
+    }
+  };
 
   const deleteRecord = (record: any) => {
     const newData = data.filter((item) => item.key !== record.key);
@@ -109,7 +163,25 @@ const ViewInstallationDetails: React.FC<InstallationInformationsProps> = ({
 
   const showEmissionDrawer = (cnCode: string) => {
     setOpenEmissionDataDrawer(true);
-    setEmissionData(cnCode);
+    setCnCode(cnCode);
+  };
+
+  const onCloseProductionProcessDrawer = () => {
+    setOpenProductionProcessDrawer(false);
+  };
+
+  const showProductionProcessDrawer = (cnCode: string) => {
+    setOpenProductionProcessDrawer(true);
+    setCnCode(cnCode);
+  };
+
+  const onCloseCarbonPricePaidDrawer = () => {
+    setOpenCarbonPriceDrawer(false);
+  };
+
+  const showCarbonPricePaidDrawer = (cnCode: string) => {
+    setOpenCarbonPriceDrawer(true);
+    setCnCode(cnCode);
   };
 
   const getMenu = (record: any) => {
@@ -119,7 +191,7 @@ const ViewInstallationDetails: React.FC<InstallationInformationsProps> = ({
           className={`${styles.text}`}
           key="edit"
           icon={<EditTwoTone />}
-          // onClick={() => showDrawer(record)}
+          onClick={() => handleonClick(record)}
         >
           Edit
         </Menu.Item>
@@ -169,7 +241,7 @@ const ViewInstallationDetails: React.FC<InstallationInformationsProps> = ({
                     showEmissionDrawer(record.imported_good[index])
                   }
                 >
-                  {data}
+                  Add
                 </SecondaryButton>
               ),
             )}
@@ -186,7 +258,14 @@ const ViewInstallationDetails: React.FC<InstallationInformationsProps> = ({
               data === "Available" ? (
                 <PrimaryButton key={index}>{data}</PrimaryButton>
               ) : (
-                <SecondaryButton key={index}>{data}</SecondaryButton>
+                <SecondaryButton
+                  key={index}
+                  onClick={() =>
+                    showProductionProcessDrawer(record.imported_good[index])
+                  }
+                >
+                  Add
+                </SecondaryButton>
               ),
             )}
           </div>
@@ -197,12 +276,19 @@ const ViewInstallationDetails: React.FC<InstallationInformationsProps> = ({
         dataIndex: "carbonPricePaidData",
         key: "carbonPricePaidData",
         render: (carbonPricePaidData: string[]) => (
-          <div className="flex flex-col gap-5">
+          <div className="flex flex-col gap-5 justify-center">
             {carbonPricePaidData.map((data, index) =>
               data === "Available" ? (
                 <PrimaryButton key={index}>{data}</PrimaryButton>
               ) : (
-                <SecondaryButton key={index}>{data}</SecondaryButton>
+                <SecondaryButton
+                  key={index}
+                  onClick={() =>
+                    showCarbonPricePaidDrawer(record.imported_good[index])
+                  }
+                >
+                  Add
+                </SecondaryButton>
               ),
             )}
           </div>
@@ -240,118 +326,176 @@ const ViewInstallationDetails: React.FC<InstallationInformationsProps> = ({
   };
   return (
     <>
-      <AddNewInstallation
-        visible={openInstallationDrawer}
-        onCloseDrawer={onCloseInstallationDrawer}
-      />
-
-      <RequestMissingData
-        visible={openRequestDrawer}
-        onCloseDrawer={onCloseRequestDrawer}
-      />
-
-      <AddEmissionData
-        visible={openEmissionDataDrawer}
-        onCloseDrawer={onCloseEmissionDrawer}
-        cnCode={emissionData}
-      />
-      <h1 className={`${styles.heading1}`}>Add New Operator</h1>
-
-      <div className={`${styles.box} my-[5vh]`}>
-        <div className="flex justify-between items-center">
-          <PrimaryButton>
-            <ArrowLeftOutlined />
-          </PrimaryButton>
-          <PrimaryButton onClick={showRequestDrawer}>
-            <PlusOutlined />
-            Request missing data from your Operator
-          </PrimaryButton>
-        </div>
-        <h2 className={`${styles.heading2}`}>{basicInformation?.name}</h2>
-
-        {/* Basic Information */}
-        <h3 className={`${styles.heading3}`}>Basic Information</h3>
-        <div className="flex flex-wrap gap-y-10">
-          {infofields.map((field) => (
-            <div
-              className="w-1/3 flex flex-col items-left gap-3"
-              key={String(field.name)}
-            >
-              <p className={`${styles.label}`}>{field.label}</p>
-              <p className={`${styles.text}`}>{field.value}</p>
-            </div>
-          ))}
-        </div>
-
-        {/* Contact Data */}
-        <h3 className={`${styles.heading3}`}>Contact Data</h3>
-        <div className="flex flex-wrap gap-y-10">
-          {contactFields.map((field) => (
-            <div
-              className="w-1/3 flex flex-col items-left gap-3"
-              key={String(field.name)}
-            >
-              <p className={`${styles.label}`}>{field.label}</p>
-              <p className={`${styles.text}`}>{field.value}</p>
-            </div>
-          ))}
-        </div>
-
-        {/* Address Data */}
-        <h3 className={`${styles.heading3}`}>Address Data</h3>
-        <div className="flex flex-col flex-wrap ">
-          <div className="flex">
-            {addressFields.slice(0, 3).map((field) => (
-              <div
-                className="w-1/3 flex flex-col items-left gap-3"
-                key={field.name}
-              >
-                <p className={`${styles.label}`}>{field.label}</p>
-                <p className={`${styles.text}`} key={field.name}>
-                  {field.value}
-                </p>
-              </div>
-            ))}
-          </div>
-          <div className="flex">
-            {addressFields.slice(3).map((field) => (
-              <div
-                className="w-1/3 flex flex-col items-left gap-3"
-                key={field.name}
-              >
-                <p className={`${styles.label}`}>{field.label}</p>
-                <p className={`${styles.text}`} key={field.name}>
-                  {field.value}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Line */}
-        <hr className="m-0 border border-solid border-nao_light_gray" />
-
-        {/* Produced Goods */}
-        <div className="flex justify-between items-center">
-          <h3 className={`${styles.heading3}`}>
-            Installations <QuestionCircleOutlined className="text-sm" />
-          </h3>
-          <PrimaryButton onClick={showInstallationDrawer}>
-            <PlusOutlined />
-            Add new Installation
-          </PrimaryButton>
-        </div>
-
-        {/* Line */}
-        <hr className="m-0 border border-solid border-nao_light_gray" />
-
-        <Table
-          dataSource={InstallationData}
-          columns={InstallationColumn}
-          expandable={{ expandedRowRender }}
-          pagination={false}
+      {selectedRow ? (
+        <ViewOperatorDetails
+          selectedRow={selectedRow}
+          setSelectedRow={setSelectedRow}
         />
-      </div>
+      ) : (
+        <>
+          <AddNewInstallation
+            visible={openInstallationDrawer}
+            onCloseDrawer={onCloseInstallationDrawer}
+          />
+
+          <RequestMissingData
+            visible={openRequestDrawer}
+            onCloseDrawer={onCloseRequestDrawer}
+          />
+
+          <AddEmissionData
+            visible={openEmissionDataDrawer}
+            onCloseDrawer={onCloseEmissionDrawer}
+            cnCode={cnCode}
+          />
+
+          <AddProcessData
+            visible={openProductionProcessDrawer}
+            onCloseDrawer={onCloseProductionProcessDrawer}
+            cnCode={cnCode}
+          />
+
+          <AddCarbonPricePaidData
+            visible={openCarbonPriceDrawer}
+            onCloseDrawer={onCloseCarbonPricePaidDrawer}
+            cnCode={cnCode}
+          />
+
+          <h1 className={`${styles.heading1}`}>Add New Operator</h1>
+
+          <div className={`${styles.box} my-[5vh]`}>
+            <div className="flex justify-between items-center">
+              <PrimaryButton>
+                <ArrowLeftOutlined />
+              </PrimaryButton>
+              <PrimaryButton onClick={showRequestDrawer}>
+                <PlusOutlined />
+                Request missing data from your Operator
+              </PrimaryButton>
+            </div>
+            <h2 className={`${styles.heading2}`}>{basicInformation?.name}</h2>
+
+            <CustomForm<OperatorInformations>
+              form={form}
+              initialValues={initialData}
+              onSubmit={handleSubmit}
+              formFields={[
+                {
+                  title: "Basic Information",
+                  fields: [
+                    {
+                      type: "input",
+                      label: "Legal Name",
+                      name: "name",
+                      required: true,
+                    },
+                    {
+                      type: "input",
+                      label: "UN/LOCODE Number",
+                      name: "UN/LOCODE Number",
+                      required: true,
+                    },
+                    {
+                      type: "input",
+                      label: "Economic Activity",
+                      name: "economicActivity",
+                      required: true,
+                    },
+                  ],
+                },
+                {
+                  title: "Contact Data",
+                  fields: [
+                    {
+                      type: "input",
+                      label: "First Name",
+                      name: "firstName",
+                      required: true,
+                    },
+                    {
+                      type: "input",
+                      label: "Last Name",
+                      name: "lastName",
+                      required: true,
+                    },
+                    {
+                      type: "input",
+                      label: "Email",
+                      name: "email",
+                      required: true,
+                    },
+                    {
+                      type: "input",
+                      label: "Phone Number",
+                      name: "phone_number",
+                      required: true,
+                    },
+                  ],
+                },
+                {
+                  title: "Address Data",
+                  fields: [
+                    {
+                      type: "input",
+                      label: "Street Name",
+                      name: "street",
+                      required: true,
+                    },
+                    {
+                      type: "input",
+                      label: "Street Number",
+                      name: "streetNumber",
+                      required: true,
+                    },
+                    {
+                      type: "input",
+                      label: "City",
+                      name: "city",
+                      required: true,
+                    },
+                    {
+                      type: "input",
+                      label: "Post Code",
+                      name: "postcode",
+                      required: true,
+                    },
+                    {
+                      type: "input",
+                      label: "Country",
+                      name: "country",
+                      required: true,
+                    },
+                  ],
+                },
+              ]}
+            />
+
+            {/* Line */}
+            <hr className="m-0 border border-solid border-nao_light_gray" />
+
+            {/* Produced Goods */}
+            <div className="flex justify-between items-center">
+              <h3 className={`${styles.heading3}`}>
+                Installations <QuestionCircleOutlined className="text-sm" />
+              </h3>
+              <PrimaryButton onClick={showInstallationDrawer}>
+                <PlusOutlined />
+                Add new Installation
+              </PrimaryButton>
+            </div>
+
+            {/* Line */}
+            <hr className="m-0 border border-solid border-nao_light_gray" />
+
+            <Table
+              dataSource={InstallationData}
+              columns={InstallationColumn}
+              expandable={{ expandedRowRender }}
+              pagination={false}
+            />
+          </div>
+        </>
+      )}
     </>
   );
 };

@@ -18,7 +18,7 @@ export interface BasicInformation {
 }
 
 export interface DirectEmissions {
-  typeOfDertermination: string;
+  typeOfDetermination: string;
   reportingMethodology: string;
   nameOfMethodology: string;
   descriptionOfMethodology: string;
@@ -27,7 +27,7 @@ export interface DirectEmissions {
 }
 
 export interface IndirectEmissions {
-  typeOfDertermination: string;
+  typeOfDetermination: string;
   electricityConsumption: number;
   emissionFactorSource: string;
   sourceOfElectricity: string;
@@ -57,7 +57,7 @@ const AddEmissionData: React.FC<EmissionDataProps> = ({
       producedNetMassUnit: "",
     },
     directEmissions: {
-      typeOfDertermination: "",
+      typeOfDetermination: "",
       reportingMethodology: "",
       nameOfMethodology: "",
       descriptionOfMethodology: "",
@@ -65,7 +65,7 @@ const AddEmissionData: React.FC<EmissionDataProps> = ({
       directEmbeddedEmissionsUnit: "",
     },
     indirectEmissions: {
-      typeOfDertermination: "",
+      typeOfDetermination: "",
       electricityConsumption: 0,
       emissionFactorSource: "",
       sourceOfElectricity: "",
@@ -86,12 +86,7 @@ const AddEmissionData: React.FC<EmissionDataProps> = ({
       ...prevData,
       directEmissions: values,
     }));
-    console.log(values.typeOfDertermination);
-    if (values.typeOfDertermination === "No") {
-      setcurrentStep(4);
-    } else {
-      setcurrentStep(currentStep + 1);
-    }
+    setcurrentStep(currentStep + 1);
   };
 
   const handleIndirectEmissions = (values: IndirectEmissions) => {
@@ -123,6 +118,7 @@ const AddEmissionData: React.FC<EmissionDataProps> = ({
         <DirectEmissionsForm
           onSuccess={handleDirectEmissions}
           cnCode={cnCode}
+          onBack={() => setcurrentStep(currentStep - 1)}
         />
       ),
     },
@@ -132,6 +128,7 @@ const AddEmissionData: React.FC<EmissionDataProps> = ({
         <IndirectEmissionsForm
           onSuccess={handleIndirectEmissions}
           cnCode={cnCode}
+          onBack={() => setcurrentStep(currentStep - 1)}
         />
       ),
     },
@@ -159,38 +156,15 @@ const AddEmissionData: React.FC<EmissionDataProps> = ({
         </div>
       ),
     },
-    {
-      title: "Done",
-      content: (
-        <div className={`${styles.box}`}>
-          <p className={`${styles.label}`}>That&apos;s it, we are done here!</p>
-          <p className={`${styles.text}`}>
-            This is all the emission data required for your CBAM report. You can
-            finish the process by clicking the button below.
-          </p>
-          <p className={`${styles.text}`}>
-            However, you can request specific emission data directly from your
-            supplier. You can find the button to request the data in your
-            operator sub page in the top right corner. Alternatively, you can
-            use Default Emission Values until 31/07/2024 for your imports.
-          </p>
-          <div className="w-full flex justify-end mt-5">
-            <PrimaryButton
-              className="w-fit h-fit !px-5"
-              onClick={handleCloseDrawer}
-            >
-              Finish
-            </PrimaryButton>
-          </div>
-        </div>
-      ),
-    },
   ];
 
   const items = steps
     .filter((_, index) => ![3, 4].includes(index))
     .map((items) => ({ key: items.title, title: items.title }));
 
+  const onchange = (current: number) => {
+    setcurrentStep(current);
+  };
   console.log(data);
 
   return (
@@ -202,7 +176,7 @@ const AddEmissionData: React.FC<EmissionDataProps> = ({
       open={visible}
       onClose={handleCloseDrawer}
     >
-      <Steps items={items} current={currentStep}>
+      <Steps items={items} current={currentStep} onChange={onchange}>
         {steps.map((items) => (
           <Step key={items.title} title={items.title} />
         ))}

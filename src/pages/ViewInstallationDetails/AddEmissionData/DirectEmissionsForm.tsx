@@ -5,15 +5,16 @@ import { Form, Collapse } from "antd";
 import { DirectEmissions } from ".";
 
 import { PrimaryButton } from "@/components/Button/PrimaryButton";
+import { SecondaryButton } from "@/components/Button/SecondaryButton";
 import SelectCollapse from "@/components/Collapse/SelectCollapse";
 import InputCollapse from "@/components/Collapse/InputCollapse";
 import styles from "@/assets/Styles";
-import { SecondaryButton } from "@/components/Button/SecondaryButton";
 
 const { Panel } = Collapse;
 
 interface DirectEmissionsProps {
   onSuccess: (values: DirectEmissions) => void;
+  onBack: () => void;
   cnCode: string;
 }
 
@@ -69,30 +70,57 @@ const descriptionReportingMethodology: {
   },
 ];
 
-const DirectEmissionsForm = ({ onSuccess, cnCode }: DirectEmissionsProps) => {
+const DirectEmissionsForm = ({
+  onSuccess,
+  onBack,
+  cnCode,
+}: DirectEmissionsProps) => {
+  const [form] = Form.useForm();
   const [selected, setSelected] = useState("");
-  const [activeKey, setActiveKey] = useState(0);
+  const [typeOfDetermination, setTypeOfDetermination] = useState("");
 
   console.log(selected);
 
-  const handleNext = async () => {
+  // Handle Select Change
+  const handleSelectChange = (
+    value: string,
+    setState: React.Dispatch<React.SetStateAction<string>>,
+  ) => {
+    setState(value);
+  };
+
+  // Handle form submission
+  const handleSubmit = async (values: DirectEmissions) => {
     try {
+      // Validate the form
       await form.validateFields();
-      setActiveKey(activeKey + 1);
+
+      // Save the data
+      values.typeOfDetermination = typeOfDetermination;
+
+      // View the data
+      console.log(values);
+
+      // Call On Success
+      onSuccess(values);
     } catch (error) {
       console.log(error);
     }
   };
 
-  const [form] = Form.useForm();
-  return (
-    <Form form={form} onFinish={onSuccess} className={`${styles.box} gap-1`}>
-      <Collapse activeKey={activeKey}>
-        {/* First Panel: Type of Determination */}
-        <Panel header="Type of Determination" key="0">
+  // Handle failed form submission
+  const handleFailedSubmit = (errorInfo: any) => {
+    console.log("Failed:", errorInfo);
+  };
+
+  // Add Type Of Determination
+  const renderTypeOfDetermination = () => (
+    <div className="w-full flex flex-col justify-between gap-5">
+      {typeOfDetermination === "" ? (
+        <>
           <SelectCollapse
             selectField={{
-              name: "typeOfDertermination",
+              name: "typeOfDetermination",
               placeholder: "Select",
               label: (
                 <div>
@@ -107,15 +135,60 @@ const DirectEmissionsForm = ({ onSuccess, cnCode }: DirectEmissionsProps) => {
                 { key: "yes", value: "Yes", name: "yes" },
                 { key: "no", value: "No", name: "no" },
               ],
-              onChange: (value) => setSelected(value),
+              onChange: (value) =>
+                handleSelectChange(value, setTypeOfDetermination),
             }}
           />
-          <div className="w-full flex justify-end mt-5">
-            {/*Next Button */}
-            <SecondaryButton onClick={handleNext} className="w-fit h-fit !px-5">
-              Next
+        </>
+      ) : typeOfDetermination === "No" ? (
+        <div className={`${styles.box}`}>
+          <p className={`${styles.label}`}>That&apos;s it, we are done here!</p>
+          <p className={`${styles.text}`}>
+            This is all the emission data required for your CBAM report. You can
+            finish the process by clicking the button below.
+          </p>
+          <p className={`${styles.text}`}>
+            However, you can request specific emission data directly from your
+            supplier. You can find the button to request the data in your
+            operator sub page in the top right corner. Alternatively, you can
+            use Default Emission Values until 31/07/2024 for your imports.
+          </p>
+          <div className="flex justify-end gap-2">
+            <SecondaryButton
+              onClick={() => {
+                setTypeOfDetermination("");
+                form.resetFields(["typeOfDetermination"]);
+              }}
+              className="w-fit h-fit !px-5"
+            >
+              Back
             </SecondaryButton>
           </div>
+        </div>
+      ) : (
+        <>
+          <div className="w-full flex flex-col justify-between">
+            <p className="!m-0 !mb-5">
+              Okay, you have specific data for the Direct Emissions caused
+              during the production of the good.
+            </p>
+          </div>
+        </>
+      )}
+    </div>
+  );
+
+  return (
+    <Form
+      form={form}
+      onFinish={handleSubmit}
+      onFinishFailed={handleFailedSubmit}
+      className={`${styles.box} gap-1`}
+    >
+      <Collapse accordion>
+        {/* First Panel: Type of Determination */}
+        <Panel header="Type of Determination" key="0">
+          {renderTypeOfDetermination()}
         </Panel>
 
         {/* Second Panel: Type of applicable Reporting Methodology */}
@@ -138,23 +211,11 @@ const DirectEmissionsForm = ({ onSuccess, cnCode }: DirectEmissionsProps) => {
               onChange: (value) => setSelected(value),
             }}
           />
-          <div className="w-full flex justify-end mt-5">
-            {/*Next Button */}
-            <SecondaryButton onClick={handleNext} className="w-fit h-fit !px-5">
-              Next
-            </SecondaryButton>
-          </div>
         </Panel>
 
         {/* Third Panel: Description of applicable Reporting Methodology */}
         <Panel header="Description of applicable Reporting Methodology" key="2">
           <InputCollapse fields={descriptionReportingMethodology} />
-          <div className="w-full flex justify-end mt-5">
-            {/*Next Button */}
-            <SecondaryButton onClick={handleNext} className="w-fit h-fit !px-5">
-              Next
-            </SecondaryButton>
-          </div>
         </Panel>
 
         {/* Fourth Panel: Direct Embedded Emissions */}
@@ -196,22 +257,14 @@ const DirectEmissionsForm = ({ onSuccess, cnCode }: DirectEmissionsProps) => {
               }}
             />
           </div>
-          <div className="w-full flex justify-end mt-5">
-            {/*Next Button */}
-            <SecondaryButton onClick={handleNext} className="w-fit h-fit !px-5">
-              Next
-            </SecondaryButton>
-          </div>
         </Panel>
       </Collapse>
+      {/*Actions Button */}
       <div className="flex justify-end gap-5">
-        <PrimaryButton
-          htmlType="submit"
-          className={`w-fit h-fit !px-5 ${
-            activeKey !== 4 &&
-            "opacity-50 pointer-events-none cursor-not-allowed"
-          }`}
-        >
+        <SecondaryButton onClick={onBack} className="w-fit h-fit !px-5">
+          Back
+        </SecondaryButton>
+        <PrimaryButton htmlType="submit" className="w-fit h-fit !px-5">
           Next
         </PrimaryButton>
       </div>

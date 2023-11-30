@@ -13,6 +13,7 @@ import styles from "@/assets/Styles";
 const { Panel } = Collapse;
 interface IndirectEmissionsProps {
   onSuccess: (values: IndirectEmissions) => void;
+  onBack: () => void;
   cnCode: string;
 }
 
@@ -69,26 +70,39 @@ const sourceOfElectricityFactor = [
 
 const IndirectEmissionsForm = ({
   onSuccess,
+  onBack,
   cnCode,
 }: IndirectEmissionsProps) => {
   const [selected, setSelected] = useState("");
-  const [activeKey, setActiveKey] = useState(0);
 
   console.log(selected);
 
-  const handleNext = async () => {
+  // Handle Submit form  submission
+  const handleSubmit = async (values: IndirectEmissions) => {
     try {
       await form.validateFields();
-      setActiveKey(activeKey + 1);
+
+      // Call the onSuccess function
+      onSuccess(values);
     } catch (error) {
       console.log(error);
     }
   };
 
+  // Handle failed form submission
+  const handleFailedSubmit = (errorInfo: any) => {
+    console.log(errorInfo);
+  };
+
   const [form] = Form.useForm();
   return (
-    <Form form={form} onFinish={onSuccess} className={`${styles.box} gap-1`}>
-      <Collapse activeKey={activeKey}>
+    <Form
+      form={form}
+      onFinish={handleSubmit}
+      onFinishFailed={handleFailedSubmit}
+      className={`${styles.box} gap-1`}
+    >
+      <Collapse accordion>
         {/* First Panel: Type of Determination */}
         <Panel header="Type of Determination" key="0">
           <SelectCollapse
@@ -111,12 +125,6 @@ const IndirectEmissionsForm = ({
               onChange: (value) => setSelected(value),
             }}
           />
-          <div className="w-full flex justify-end mt-5">
-            {/*Next Button */}
-            <SecondaryButton onClick={handleNext} className="w-fit h-fit !px-5">
-              Next
-            </SecondaryButton>
-          </div>
         </Panel>
 
         {/* Second Panel: Amount of Electricity Consumed */}
@@ -163,12 +171,6 @@ const IndirectEmissionsForm = ({
               }}
             />
           </div>
-          <div className="w-full flex justify-end mt-5">
-            {/*Next Button */}
-            <SecondaryButton onClick={handleNext} className="w-fit h-fit !px-5">
-              Next
-            </SecondaryButton>
-          </div>
         </Panel>
 
         {/* Third Panel: Type of applicable Reporting Methodology */}
@@ -191,12 +193,6 @@ const IndirectEmissionsForm = ({
               onChange: (value) => setSelected(value),
             }}
           />
-          <div className="w-full flex justify-end mt-5">
-            {/*Next Button */}
-            <SecondaryButton onClick={handleNext} className="w-fit h-fit !px-5">
-              Next
-            </SecondaryButton>
-          </div>
         </Panel>
 
         {/* Fourth Panel: Source of Emission Factor */}
@@ -211,12 +207,6 @@ const IndirectEmissionsForm = ({
               onChange: (value) => setSelected(value),
             }}
           />
-          <div className="w-full flex justify-end mt-5">
-            {/*Next Button */}
-            <SecondaryButton onClick={handleNext} className="w-fit h-fit !px-5">
-              Next
-            </SecondaryButton>
-          </div>
         </Panel>
 
         {/* Fifth Panel: Amount of Electricity Consumed */}
@@ -253,25 +243,16 @@ const IndirectEmissionsForm = ({
               }}
             />
           </div>
-          <div className="w-full flex justify-end mt-5">
-            {/*Next Button */}
-            <SecondaryButton onClick={handleNext} className="w-fit h-fit !px-5">
-              Next
-            </SecondaryButton>
-          </div>
         </Panel>
       </Collapse>
 
-      {/* Next Button */}
+      {/*Actions Button */}
       <div className="flex justify-end gap-5">
-        <PrimaryButton
-          htmlType="submit"
-          className={`w-fit h-fit !px-5 ${
-            activeKey !== 5 &&
-            "opacity-50 pointer-events-none cursor-not-allowed"
-          }`}
-        >
-          Finish
+        <SecondaryButton onClick={onBack} className="w-fit h-fit !px-5">
+          Back
+        </SecondaryButton>
+        <PrimaryButton htmlType="submit" className="w-fit h-fit !px-5">
+          Next
         </PrimaryButton>
       </div>
     </Form>

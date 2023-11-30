@@ -82,7 +82,12 @@ const AddNewInstallation: React.FC<AddInstallationProps> = ({
     },
     {
       title: "Imported Goods",
-      content: <ImportedGoodsForm onSuccess={handleImportedGoods} />,
+      content: (
+        <ImportedGoodsForm
+          onSuccess={handleImportedGoods}
+          onBack={() => setcurrentStep(currentStep - 1)}
+        />
+      ),
     },
     {
       title: "Finish",
@@ -109,6 +114,9 @@ const AddNewInstallation: React.FC<AddInstallationProps> = ({
     .filter((_, index) => index !== steps.length - 1)
     .map((items) => ({ key: items.title, title: items.title }));
 
+  const onchange = (current: number) => {
+    setcurrentStep(current);
+  };
   console.log(data);
   return (
     <>
@@ -120,7 +128,7 @@ const AddNewInstallation: React.FC<AddInstallationProps> = ({
         open={visible}
         onClose={handleCloseDrawer}
       >
-        <Steps current={currentStep} items={items}>
+        <Steps current={currentStep} items={items} onChange={onchange}>
           {steps.map((item) => (
             <Step key={item.title} title={item.title} />
           ))}

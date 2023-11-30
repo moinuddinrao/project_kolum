@@ -12,6 +12,7 @@ const { Panel } = Collapse;
 
 interface ImportedGoodsProps {
   onSuccess: (values: ImportedGoods) => void;
+  onBack: () => void;
 }
 
 const goodsCategories = {
@@ -38,10 +39,9 @@ const goodsCategories = {
   ],
 };
 
-const ImportedGoodsForm = ({ onSuccess }: ImportedGoodsProps) => {
+const ImportedGoodsForm = ({ onSuccess, onBack }: ImportedGoodsProps) => {
   const [form] = Form.useForm();
 
-  const [activeKey, setActiveKey] = useState(0);
   const [selectedCategory, setSelectedCategory] = useState("");
   const [digits, setDigits] = useState(["", "", ""]);
   const [description, setDescription] = useState("");
@@ -50,13 +50,11 @@ const ImportedGoodsForm = ({ onSuccess }: ImportedGoodsProps) => {
   // Handle the change in the goods category
   const onChange = (category: string) => {
     setSelectedCategory(category);
-    setActiveKey(activeKey + 1);
   };
 
   const handleNext = async () => {
     try {
       await form.validateFields();
-      setActiveKey(activeKey + 1);
     } catch (error) {
       console.log(error);
     }
@@ -76,7 +74,7 @@ const ImportedGoodsForm = ({ onSuccess }: ImportedGoodsProps) => {
 
   return (
     <Form form={form} onFinish={handleSubmit} className={`${styles.box}`}>
-      <Collapse activeKey={activeKey}>
+      <Collapse accordion>
         {/* Goods Category */}
         <Panel header="Imported Goods" key="0">
           <p>Which goods are you importing from this Installation?</p>
@@ -196,14 +194,12 @@ const ImportedGoodsForm = ({ onSuccess }: ImportedGoodsProps) => {
           </div>
         </Panel>
       </Collapse>
-      <div className="w-full flex justify-end mt-5">
-        <PrimaryButton
-          htmlType="submit"
-          className={`w-fit h-fit !px-5 ${
-            activeKey !== 2 &&
-            "opacity-50 pointer-events-none cursor-not-allowed"
-          }`}
-        >
+      {/*Actions Button */}
+      <div className="flex justify-end gap-5">
+        <SecondaryButton onClick={onBack} className="w-fit h-fit !px-5">
+          Back
+        </SecondaryButton>
+        <PrimaryButton htmlType="submit" className="w-fit h-fit !px-5">
           Next
         </PrimaryButton>
       </div>
